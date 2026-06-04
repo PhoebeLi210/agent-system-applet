@@ -211,8 +211,8 @@ const ADMIN_CONFIG = {
 
 // 百度云OCR配置
 const BAIDU_OCR_CONFIG = {
-    apiKey: process.env.BAIDU_API_KEY || '10LPcwN6uX1ndr0zQDINZxbT',
-    secretKey: process.env.BAIDU_SECRET_KEY || 'dzMv0W19vwup6RXHrvvmcgsQv9X4VGRZ',
+    apiKey: process.env.BAIDU_API_KEY || '',
+    secretKey: process.env.BAIDU_SECRET_KEY || '',
     tokenUrl: 'https://aip.baidubce.com/oauth/2.0/token',
     idcardUrl: 'https://aip.baidubce.com/rest/2.0/ocr/v1/idcard',
     businessLicenseUrl: 'https://aip.baidubce.com/rest/2.0/ocr/v1/business_license',
@@ -221,15 +221,15 @@ const BAIDU_OCR_CONFIG = {
 
 // 微信公众号配置
 const WECHAT_CONFIG = {
-    token: process.env.WECHAT_TOKEN || 'a8f3e9d2c1b5',
-    appId: process.env.WECHAT_APPID || 'wxf7e1354eba5ade9f',
-    appSecret: process.env.WECHAT_APPSECRET || '7c823207c9420aff3ba8d52b55b7ca9f'
+    token: process.env.WECHAT_TOKEN || '',
+    appId: process.env.WECHAT_APPID || '',
+    appSecret: process.env.WECHAT_APPSECRET || ''
 };
 
 // 小程序配置（新增）
 const MINI_PROGRAM_CONFIG = {
-    appId: process.env.MINIPROGRAM_APPID || 'wxde2dd2c50d89d2ef',
-    appSecret: process.env.MINIPROGRAM_APPSECRET || '3a5698e586ef6db452f216681bb6b728'
+    appId: process.env.MINIPROGRAM_APPID || '',
+    appSecret: process.env.MINIPROGRAM_APPSECRET || ''
 };
 
 // 小程序码保存路径（新增）

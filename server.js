@@ -207,7 +207,7 @@ const port = 3002;
 
 // 会话配置
 app.use(session({
-    secret: 'your-secret-key-change-in-productio',
+    secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
@@ -216,14 +216,14 @@ app.use(session({
 // 管理员配置 - 在生产环境中应该使用环境变量或配置文件
 const ADMIN_CONFIG = {
     username: process.env.ADMIN_USERNAME || 'admin',
-    password: process.env.ADMIN_PASSWORD || '1nNpm5q82Hsr',
-    secret: process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+    password: process.env.ADMIN_PASSWORD || '',
+    secret: process.env.JWT_SECRET || ''
 };
 
 // 百度云OCR配置
 const BAIDU_OCR_CONFIG = {
-    apiKey: process.env.BAIDU_API_KEY || '10LPcwN6uX1ndr0zQDINZxbT',
-    secretKey: process.env.BAIDU_SECRET_KEY || 'dzMv0W19vwup6RXHrvvmcgsQv9X4VGRZ',
+    apiKey: process.env.BAIDU_API_KEY || '',
+    secretKey: process.env.BAIDU_SECRET_KEY || '',
     tokenUrl: 'https://aip.baidubce.com/oauth/2.0/token',
     idcardUrl: 'https://aip.baidubce.com/rest/2.0/ocr/v1/idcard',
     businessLicenseUrl: 'https://aip.baidubce.com/rest/2.0/ocr/v1/business_license',
@@ -232,19 +232,33 @@ const BAIDU_OCR_CONFIG = {
 
 // 微信公众号配置
 const WECHAT_CONFIG = {
-    token: process.env.WECHAT_TOKEN || 'a8f3e9d2c1b5',
-    appId: process.env.WECHAT_APPID || 'wxf7e1354eba5ade9f',
-    appSecret: process.env.WECHAT_APPSECRET || '7c823207c9420aff3ba8d52b55b7ca9f'
+    token: process.env.WECHAT_TOKEN || '',
+    appId: process.env.WECHAT_APPID || '',
+    appSecret: process.env.WECHAT_APPSECRET || ''
 };
 
 // 小程序配置（新增）
 const MINI_PROGRAM_CONFIG = {
-    appId: process.env.MINIPROGRAM_APPID || 'wxde2dd2c50d89d2ef',
-    appSecret: process.env.MINIPROGRAM_APPSECRET || '3a5698e586ef6db452f216681bb6b728'
+    appId: process.env.MINIPROGRAM_APPID || '',
+    appSecret: process.env.MINIPROGRAM_APPSECRET || ''
 };
 
 // 小程序码保存路径（新增）
 const MINI_CODE_PATH = process.env.MINI_CODE_PATH || '/www/wwwroot/agent.lakala.space/codes/';
+
+// 启动时警告：如果关键配置不存在，相关功能将无法工作
+if (!ADMIN_CONFIG.password || !ADMIN_CONFIG.secret) {
+    console.warn('WARNING: ADMIN_PASSWORD or JWT_SECRET is not set. Admin login and token signing may fail.');
+}
+if (!BAIDU_OCR_CONFIG.apiKey || !BAIDU_OCR_CONFIG.secretKey) {
+    console.warn('WARNING: BAIDU_API_KEY or BAIDU_SECRET_KEY is not set. OCR functionality may fail.');
+}
+if (!WECHAT_CONFIG.appId || !WECHAT_CONFIG.appSecret) {
+    console.warn('WARNING: WECHAT_APPID or WECHAT_APPSECRET is not set. WeChat public account functionality may fail.');
+}
+if (!MINI_PROGRAM_CONFIG.appId || !MINI_PROGRAM_CONFIG.appSecret) {
+    console.warn('WARNING: MINIPROGRAM_APPID or MINIPROGRAM_APPSECRET is not set. Mini-program code generation may fail.');
+}
 
 // 缓存百度云access_token
 let baiduAccessToken = null;

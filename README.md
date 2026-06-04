@@ -11,7 +11,9 @@ cd agent-system-applet
 npm install --production
 ```
 
-2. Configure environment variables (see `.env.example`)
+2. Configure environment variables (see `.env.example`).
+   - `JWT_SECRET`, `SESSION_SECRET`, `ADMIN_PASSWORD` should be set.
+   - `BAIDU_API_KEY`, `BAIDU_SECRET_KEY`, `WECHAT_APPID`, `WECHAT_APPSECRET`, `MINIPROGRAM_APPID`, and `MINIPROGRAM_APPSECRET` must be configured for OCR and WeChat functionality.
 
 3. Start with PM2:
 ```bash

@@ -21,8 +21,8 @@ jobs:
           script: |
             set -e
             # Ensure target dir exists
-            mkdir -p ${SERVER_PATH:-/www/wwwroot/agent-system}
-            cd ${SERVER_PATH:-/www/wwwroot/agent-system}
+            mkdir -p ${SERVER_PATH:-/www/wwwroot/agent.lakala.space}
+            cd ${SERVER_PATH:-/www/wwwroot/agent.lakala.space}
             # If repo not cloned, clone it
             if [ ! -d ".git" ]; then
               git clone --depth 1 --branch main https://github.com/${{ github.repository }} .
