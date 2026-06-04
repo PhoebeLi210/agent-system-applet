@@ -1,0 +1,314 @@
+<view class="container">
+  <view class="header">
+    <view style="width: 48rpx;"></view>
+    <text class="header-title">商户入网</text>
+    <view class="more-btn"></view>
+  </view>
+  
+  <view class="progress-bar">
+    <view class="progress-step" style="cursor: pointer;" bindtap="goToRegister">
+      <view class="progress-icon active icon-id-card"></view>
+      <view class="progress-label active">证照信息</view>
+    </view>
+    <view class="progress-line active"></view>
+    <view class="progress-step" style="cursor: pointer;" bindtap="goToMerchant">
+      <view class="progress-icon active icon-store"></view>
+      <view class="progress-label active">商户信息</view>
+    </view>
+    <view class="progress-line active"></view>
+    <view class="progress-step" style="cursor: pointer;" bindtap="goToAccount">
+      <view class="progress-icon active icon-wallet"></view>
+      <view class="progress-label active">账户信息</view>
+    </view>
+    <view class="progress-line active"></view>
+    <view class="progress-step" style="cursor: pointer;">
+      <view class="progress-icon active icon-percentage"></view>
+      <view class="progress-label active">费率信息</view>
+    </view>
+  </view>
+  
+  <view class="content">
+    <!-- 费率信息 -->
+    <view class="section">
+      <view class="section-title">费率信息</view>
+      
+      <view class="form-group">
+        <text class="label">结算周期</text>
+        <view style="display: flex; gap: 20rpx;">
+          <view class="btn-settlement {{settlementType === 'D1' ? 'btn-primary' : 'btn-secondary'}}" bindtap="onSettlementTypeChange" data-type="D1">D1</view>
+          <view class="btn-settlement {{settlementType === 'D0' ? 'btn-primary' : 'btn-secondary'}}" bindtap="onSettlementTypeChange" data-type="D0">D0</view>
+        </view>
+      </view>
+      
+      <view class="form-group">
+        <text class="label">提款类型</text>
+        <text class="settlement-text">日清</text>
+      </view>
+      
+      <view class="rate-table">
+        <view class="rate-row header">
+          <view class="rate-cell">设置项目</view>
+          <view class="rate-cell">费率%</view>
+          <view class="rate-cell">封顶</view>
+        </view>
+        <view class="rate-row">
+          <view class="rate-cell">借记卡费率</view>
+          <view class="rate-cell">0.5</view>
+          <view class="rate-cell">20</view>
+        </view>
+        <view class="rate-row">
+          <view class="rate-cell">贷记卡费率</view>
+          <view class="rate-cell">0.6</view>
+          <view class="rate-cell">不可设</view>
+        </view>
+        <view class="rate-row">
+          <view class="rate-cell">扫码费率</view>
+          <view class="rate-cell">{{scanRate}}</view>
+          <view class="rate-cell">不可设</view>
+        </view>
+        <view class="rate-row">
+          <view class="rate-cell">优惠费率</view>
+          <view class="rate-cell">{{discountRate}}</view>
+          <view class="rate-cell">不可设</view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 商户协议 -->
+    <view class="section">
+      <view class="section-title">商户协议</view>
+      
+      <view class="form-group">
+        <text class="label">商户协议类型</text>
+        <view class="radio-group">
+          <view class="radio-item">
+            <view class="radio {{agreementType === 'electronic' ? 'radio-checked' : ''}}">
+              <view class="radio-inner {{agreementType === 'electronic' ? 'radio-inner-checked' : ''}}"></view>
+            </view>
+            <text class="radio-label">电子协议</text>
+          </view>
+        </view>
+      </view>
+      
+      <button class="generate-btn {{agreementSigned ? 'signed' : ''}}" bindtap="generateAgreement" disabled="{{agreementSigned}}">
+        {{agreementSigned ? '已签署' : '生成电子协议'}}
+      </button>
+      <view class="tip">*签署并上传电子协议</view>
+    </view>
+  </view>
+  
+  <button class="submit-btn" bindtap="submitForm">提交</button>
+</view>
+
+<!-- 协议模态框 -->
+<view wx:if="{{showAgreementModal}}" class="modal-overlay" bindtap="closeAgreementModal"></view>
+<view wx:if="{{showAgreementModal}}" class="modal-container">
+  <view class="modal-header">
+    <text class="modal-title">电子协议</text>
+    <text class="modal-close" bindtap="closeAgreementModal">×</text>
+  </view>
+  <view class="modal-content">
+    <scroll-view class="agreement-scroll" scroll-y>
+      <view class="agreement-text">
+        <text class="agreement-title">特约商户支付服务合作协议</text>
+        <text class="agreement-paragraph">《特约商户支付服务合作协议》（以下简称"本协议"）是拉卡拉支付股份有限公司（正文部分简称"甲方"）与您（是指接受拉卡拉支付服务的个人或公司法人及相关单位组织等，正文部分简称"乙方"）就"支付服务业务"服务（以下简称"本服务"）所订立的有效合约。您在使用本服务之前，请仔细阅读本协议（特别是以粗体标注的内容），您通过界面注册并点击确认本协议，即表示您同意接受本协议的全部内容。如果您不同意本协议的任意内容，或者无法准确理解相关条款，请不要进行后续操作。</text>
+        <text class="agreement-paragraph no-indent">甲方：（支付机构）拉卡拉支付股份有限公司</text>
+        <text class="agreement-paragraph no-indent">乙方：（特约商户）{{merchantName}}</text>
+        <text class="agreement-paragraph no-indent">第一条 业务服务及费用</text>
+        <text class="agreement-paragraph">1. 双方确认，甲方向乙方提供支付服务业务。</text>
+        <text class="agreement-paragraph">2. 手续费：使用本服务将会产生相应的手续费，甲方按照借记卡费率0.5%、贷记卡费率0.6%、扫码费率{{scanRate}}%向乙方收取支付业务手续费（以下简称"手续费"）。甲方保留调整手续费之权利，如手续费调整。甲方将以公告方式在拉卡拉网站提示并予以公示，而无需另行通知乙方，调整后的手续费标准在公告期届满之日起生效。若乙方在手续费标准调整后继续使用本服务的，视为乙方接受手续费标准的调整。若乙方不同意调整后的手续费标准，应停止使用本服务并与甲方联系。</text>
+        <text class="agreement-paragraph">手续费由甲方直接在乙方交易资金中扣除。乙方如需甲方开具支付业务手续费发票，应在发生首笔支付业务后每自然（月/季/半年/年）次月10日前向甲方核对手续费并向甲方提出书面开票申请，甲方收到乙方书面申请后20个工作日内为乙方开具相应金额手续费发票。</text>
+        <text class="agreement-paragraph">3. 甲方应将乙方的交易资金在扣除约定的手续费和其他款项后，在2个工作日内，向乙方指定的结算账户划付资金，境外卡支付业务在第1个工作日（不含交易当日）内划付资金。乙方开通D0业务的除外。</text>
+        <text class="agreement-paragraph">4. "D0"是指乙方在服务开放时间，通过甲方交易系统申请将乙方当日收单交易资金在甲方制定的业务规则范围内，申请资金当日结算到账的服务。乙方在交易页面确认后，甲方将该次操作的金额当日汇出，由银行最终完成账户入账操作。D0业务不包括境内卡类借记卡支付业务。备注：（1）D0及提现业务开通须符合监管及甲方相关要求，由乙方另行向甲方申请，且经甲方审核通过后开通，交易额度由甲方设定并动态调整，具体以实际开通情况为准；（2）未按D0及提现业务周期结算的交易资金，不收取相应手续费。</text>
+        <text class="agreement-paragraph no-indent">第二条 服务开通</text>
+        <text class="agreement-paragraph">1. 乙方通过扫描终端机身二维码，进入注册界面，注册并绑定终端后开通本服务。</text>
+        <text class="agreement-paragraph">2. 甲方为乙方提供运营服务，包括终端网络维护、质量管理、应急响应、账户服务、用卡权益等，甲方将向乙方收取运营服务费【0-300元/年】，具体收费标准和收费方式以拉卡拉官网公示的为准。</text>
+        <text class="agreement-paragraph">3. 乙方若使用服务版终端，乙方绑定终端后需支付终端的机具服务费，该费用将从乙方的首笔收单交易资金中收取，支付给为乙方提供服务的甲方收单外包服务机构。终端服务费收取标准为最高不超过399元，具体金额以乙方实际交纳为准。</text>
+        <text class="agreement-paragraph">4. 如乙方参加"刷够返"活动，经甲方核算满足活动标准后，甲方将在事后对乙方交易手续费给予一次性优惠，优惠金额不超过乙方已支付的终端机具服务费总额。</text>
+        <text class="agreement-paragraph no-indent">第三条 甲方应按国家法律法规履行支付机构相关责任与义务。</text>
+        <text class="agreement-paragraph no-indent">第四条 甲方（含甲方分支机构、合作方，下同）为乙方提供的受理终端（包含收款码）仅限乙方在【附件一《拉卡拉商户注册登记表》中的商户地址】使用。乙方应提供符合受理终端安装要求的场地条件，并妥善保管和使用，如因乙方管理或使用不当造成终端损坏或遗失的，乙方应按终端市价向甲方赔偿，赔偿方式为现金、转账或授权甲方从乙方终端押金、交易资金等途径扣除。双方协议终止或解除时，甲方有权收回、关闭放置在乙方的受理终端或关闭网络支付接口。</text>
+        <text class="agreement-paragraph no-indent">第五条 乙方应准确填写附件一《拉卡拉商户注册登记表》中的相关信息，当乙方的工商注册名称、主营业务、法定代表人或负责人、结算账户信息等重要信息发生变更时，乙方应通过甲方官方渠道告知甲方，甲方有权重新审核乙方支付业务受理资质。当甲方认为乙方不再具备受理资质时，甲方有权单方面终止本协议。</text>
+        <text class="agreement-paragraph no-indent">第六条 乙方申请成为甲方特约商户，应主动如实提供经营资质材料及身份证明文件。乙方应保证上述资料完整、真实、合法、有效。若身份证明文件存在有效期，应在有效期前主动向甲方提供新的身份证明，证明文件失效且经甲方提示仍无合理理由拒绝更新的，甲方有权对乙方采取交易限制措施或终止向乙方提供本协议项下相关的服务。</text>
+        <text class="agreement-paragraph no-indent">第七条 乙方应当履行以下基本义务：</text>
+        <text class="agreement-paragraph">1. 基于真实的商品或服务交易背景受理银行卡，并遵守相应银行卡品牌的受理要求，不得歧视和拒绝同一银行卡品牌的不同发卡银行的持卡人；</text>
+        <text class="agreement-paragraph">2. 按规定使用受理终端（网络支付接口）和收单结算账户，不得利用其从事或协助他人从事非法活动；</text>
+        <text class="agreement-paragraph">3. 妥善处理交易数据信息，保存交易凭证，保障交易信息安全；</text>
+        <text class="agreement-paragraph">4. 不得因持卡人使用银行卡而向持卡人收取或变相收取附加费用，或降低服务水平；</text>
+        <text class="agreement-paragraph">5. 不得存储持卡人银行卡的磁道信息或芯片信息、验证码、有效期、密码等敏感信息；</text>
+        <text class="agreement-paragraph">6. 确保网络支付指令的真实性、准确性、合法性；</text>
+        <text class="agreement-paragraph">7. 仅在中华人民共和国境内（不包含香港特别行政区、澳门特别行政区及台湾地区）使用本支付服务。</text>
+        <text class="agreement-paragraph no-indent">第八条 对经查实的交易差错或乙方需调整的账务，甲方负责按照中国银联或其他卡组织差错处理的有关规定进行相应处理。对有异议的交易，甲方有权向乙方调单。</text>
+        <text class="agreement-paragraph no-indent">第九条 乙方需保存至少2年的签购单及其他的交易证明材料，保存期限自交易日期起至少2年，如因乙方资料保存不善造成的风险损失由乙方自行承担。</text>
+        <text class="agreement-paragraph no-indent">第十条 出现交易纠纷、持卡人调单或甲方有合理理由认为交易存在可疑之处时，甲方有权检查乙方原始交易签购单及相关交易证明材料，并影印留存。乙方应根据甲方要求提供真实的交易受理情况，对于甲方提出的调取交易证明材料的要求，乙方应自甲方通知之日（含）起3个工作日内提供有效交易证明材料。</text>
+        <text class="agreement-paragraph no-indent">第十一条 乙方发生以下情况时，甲方有权采取暂缓乙方全部或部分交易资金结算至少180天以上：</text>
+        <text class="agreement-paragraph">1. 发卡行发起调阅、退单；</text>
+        <text class="agreement-paragraph">2. 超出约定地理范围使用终端或终端位置无法监测的；</text>
+        <text class="agreement-paragraph">3. 交易金额、时间、频率与乙方经营范围、规模不相符等异常情形；</text>
+        <text class="agreement-paragraph">4. 疑似虚假申请、银行卡套现、洗钱、欺诈、移机、留存或泄漏持卡人账户信息等风险事件；</text>
+        <text class="agreement-paragraph">5. 从事其他违反国家法律法规规定的违法、犯罪活动；</text>
+        <text class="agreement-paragraph">6. 甲方认为乙方退款率比例过高或交易纠纷比例过高或有合理根据怀疑交易存在可疑之处，或有合理根据怀疑乙方违反本协议的其他行为；</text>
+        <text class="agreement-paragraph">7. 被工商等管理部门吊销营业执照或行政许可等，从而丧失本协议所述经营资格的；</text>
+        <text class="agreement-paragraph">8. 将甲方支付接口用于非本协议约定业务或提供给本协议约定外的第三方使用。</text>
+        <text class="agreement-paragraph">乙方发生以上第2-8项情况时，甲方同时有权设置收款限额、暂停银行卡交易、收回受理终端、关闭网络支付接口、单方面无条件终止本协议等措施，由此带给甲方的相关损失和风险责任由乙方承担，且甲方有权将乙方相关信息报送至中国银联或其他卡组织风险信息共享系统及中国支付清算协会风险信息共享系统，并向执法、监管部门、相关征信机构通报，发现乙方涉嫌电信网络新型违法犯罪的，甲方还有权向公安机关报告。</text>
+        <text class="agreement-paragraph no-indent">第十二条 发生以下情况时，甲方有权从乙方押金、保证金及交易资金中抵扣相应款项，如前述款项不足抵扣的，乙方应根据甲方要求补足差额资金，对因乙方原因造成的甲方垫款或损失，甲方有权向乙方追索：</text>
+        <text class="agreement-paragraph">1. 乙方发生退货、冲正、撤销交易；</text>
+        <text class="agreement-paragraph">2. 由于计算错误或其它原因导致甲方向乙方支付的款项或其它经乙方确认的长款；</text>
+        <text class="agreement-paragraph">3. 因乙方原因导致的发卡机构退单或卡组织追究甲方违约金；</text>
+        <text class="agreement-paragraph">4. 名义经营范围与实际情况不符而造成的本协议项下的费用差额补偿部分（补偿部分的时限为自发现日起前180天）；</text>
+        <text class="agreement-paragraph">5. 乙方违反本协议约定，导致甲方先行垫付相关方赔偿还款的；</text>
+        <text class="agreement-paragraph">6. 其它应由乙方支付的款项。</text>
+        <text class="agreement-paragraph">本条款项不随双方协议终止而终止，甲方在法律规定的诉讼时效内，均有权就合作期间乙方因本条款给甲方造成的损失向乙方追索。</text>
+        <text class="agreement-paragraph no-indent">第十三条 甲方有权对乙方进行风险评级，如乙方风险等级较高，甲方对其开通的受理卡种和交易类型进行限制，并采取强化交易监测、设置交易限额、延迟结算、增加检查频率、建立特约商户风险准备金等风险管理措施。</text>
+        <text class="agreement-paragraph no-indent">第十四条 甲方有权对乙方经营场所进行现场检查，如乙方无固定经营场所，甲方有权要求乙方定期上传经营影像或照片。如乙方连续3个月未发生交易的，甲方有权重新审核乙方商户身份，如无法核实或核实后不再具备受理资质时，甲方有权单方面终止本协议。如乙方连续12个月未发生交易的，甲方有权单方面终止本协议。</text>
+        <text class="agreement-paragraph no-indent">第十五条 甲方除有权根据本协议及附件约定外，还有权根据中国人民银行、中国银联、境外卡组织、中国清算协会已发布的及后续发布的各类通知、要求、指导意见等规范性文件内容对乙方进行监督管理并采取必要措施。</text>
+        <text class="agreement-paragraph no-indent">第十六条 鉴于乙方系通过"平台方"开发的平台（包括但不限于公众号/小程序/网站/APP等）接入甲方支付服务，乙方承诺，"平台方"向甲方发送的一切涉及乙方的系统指令，乙方均予以认可。同时，乙方同意并授权甲方向"平台方"传送乙方在本协议合作项下的相关数据。如发生争议，由乙方与"平台方"自行协商解决，与甲方无关。</text>
+        <text class="agreement-paragraph no-indent">第十七条 乙方所有在线操作包括在甲方网站、业务系统、微信服务平台、APP等的操作和交易，乙方的登录账号和密码是甲方验证乙方身份的重要印签，乙方对此负有保密责任。凡使用乙方登录账号和密码进行的所有线上操作和交易均视为乙方亲自办理的有效委托，具有同书面委托同等的法律效力。乙方对使用乙方登录账号和密码进行的所有操作及交易结果承担全部经济和法律责任，有证据证明甲方原因导致乙方账号、密码泄露的情形除外。</text>
+        <text class="agreement-paragraph no-indent">第十八条 乙方同意并授权甲方将乙方相关信息（包括乙方企业名称、统一社会信用代码、法定代表人姓名、法定代表人居民身份证号、法定代表人手机号、经办人姓名、经办人居民身份证号、经办人手机号、经办人电子邮箱、经营地址、结算账户信息、交易明细、入账信息、对账单明细数据、结算业务编号及名称）提供给数币业务合作银行，同意授权数币业务合作银行从甲方接收并处理前述乙方相关信息，并为乙方办理对公数字人民币钱包、个人数字人民币钱包、对公结算账户、个人存款账户等各类金融业务。</text>
+        <text class="agreement-paragraph no-indent">第十九条 甲方遵照监管规范，按照最少必要原则收集、使用乙方的金融信息，甲方对乙方金融信息严格保密，除本协议约定情形外，不泄露或非法向他人提供乙方金融信息。具体请查阅《拉卡拉支付个人信息保护政策》。</text>
+        <text class="agreement-paragraph no-indent">第二十条 乙方同意并授权甲方以加密传输方式将乙方信息共享给具备提供验证服务资质的第三方机构进行一致性比对并输出核验结果，同意并授权第三方机构使用乙方的信息用于验证服务并以加密传输的方式向甲方返回核验结果。</text>
+        <text class="agreement-paragraph no-indent">第二十一条 本协议执行过程中，如中国人民银行、银联、境外卡组织等监管机构或行业组织的规定或甲方业务规则、市场政策发生变化，导致支付业务规则或者本协议项下的费用发生变化，甲方可以单方面调整相关条款约定。</text>
+        <text class="agreement-paragraph">乙方理解并同意甲方采取在官方网站公告、电子服务渠道信息推送、邮件或短信通知等方式向乙方发起变更通知。如乙方不同意该变更后的内容，应停止使用甲方服务；如乙方在获知或在合理时限内应当获知甲方变更通知后，仍继续使用甲方服务的，视为同意对协议涉及条款进行变更。</text>
+        <text class="agreement-paragraph no-indent">第二十二条 任何一方违反本协议约定，另一方有权要求在合理期限内纠正，要求赔偿因此遭受的直接经济损失。但任何一方均无须向对方的间接损失、预期利益承担赔偿责任。</text>
+        <text class="agreement-paragraph no-indent">第二十三条 除本协议另有约定外，双方均有权根据业务需要单方面解除或终止本协议，但应提前30天通知对方。</text>
+        <text class="agreement-paragraph no-indent">第二十四条 乙方确认，在《拉卡拉商户注册登记表》中指定的联系人姓名、地址、电子邮箱、电话等联系信息可用于甲方处理本协议项下事务时向乙方履行通知、文件物品递送义务。其中，联系人负责对本协议所涉事务的沟通、文件物品的签收、移交等事宜。甲方发送到乙方指定的联系地址、联系人电子邮箱即视为对乙方的有效送达。</text>
+        <text class="agreement-paragraph no-indent">第二十五条 乙方确认，其变更《拉卡拉商户注册登记表》中指定的联系信息时，应至少提前5个工作日以书面方式通知甲方。因乙方未及时通知导致甲方依照本协议约定联系信息履行通知、文件物品递送义务的，甲方的通知、文件物品（包括但不限于文本、文件及资料等）自发送之日起第3个工作日（含）视为甲方送达之日。</text>
+        <text class="agreement-paragraph no-indent">第二十六条 双方在履行本协议过程中发生的任何争议，经协商不成的，任何一方可将该争议提请上海国际经济贸易仲裁委员会按照该会仲裁规则进行仲裁；本协议的生效、解释、履行和争议的解决均应适用中国法律。</text>
+        <text class="agreement-paragraph no-indent">第二十七条 其他</text>
+        <text class="agreement-paragraph">1. 本协议自乙方同意后生效，有效期为一年。有效期届满后如双方无书面异议，本协议自动延期，每次延期一年，依此类推。若甲乙任何一方对延期有异议，应于协议当次届满前一个月向对方书面提出异议。甲乙双方过往签订的协议如与本协议有冲突以本协议为准。</text>
+        <text class="agreement-paragraph">2. 本协议附件同时包括《银行卡收单业务服务条款》、《拉卡拉扫码支付业务条款》、《拉卡拉境外银行卡支付业务条款》、《互联网支付服务条款》及其子附件、《拉卡拉支付个人信息保护政策》，上述附件由乙方登陆拉卡拉官方网站（www.lakala.com）查阅、下载并留存。上述附件内容与本协议约定冲突的，以本协议约定为准。</text>
+        <text class="agreement-paragraph">3. 乙方声明：甲方已采取合理方式提请乙方注意本协议、附件及官方网站公示内容的条款，并详细说明；乙方在本协议上签字视为同意基本协议、附件及官方网站公示内容的条款。</text>
+        <text class="agreement-paragraph no-indent" style="font-weight: 600; margin-top: 16rpx;">附件一</text>
+        <text class="agreement-paragraph no-indent" style="font-weight: 600;">拉卡拉商户注册登记表</text>
+        <view class="attachment-table">
+          <view class="table-header">
+            <view class="table-cell" style="flex: 4;">执照信息</view>
+          </view>
+          <view class="table-row">
+            <view class="table-cell label-cell">营业执照号</view>
+            <view class="table-cell value-cell">{{licenseNumber}}</view>
+            <view class="table-cell label-cell">法人</view>
+            <view class="table-cell value-cell">{{idCardName}}</view>
+          </view>
+          <view class="table-row">
+            <view class="table-cell label-cell">商户名</view>
+            <view class="table-cell value-cell">{{merchantName}}</view>
+            <view class="table-cell label-cell">身份证号</view>
+            <view class="table-cell value-cell">{{idCardNumber}}</view>
+          </view>
+          <view class="table-row">
+            <view class="table-cell label-cell">所在区域</view>
+            <view class="table-cell value-cell">{{regionText}}</view>
+            <view class="table-cell label-cell">有效期</view>
+            <view class="table-cell value-cell">{{idCardValidity}}</view>
+          </view>
+          <view class="table-row single-cell-row">
+            <view class="table-cell label-cell">详细地址</view>
+            <view class="table-cell value-cell" style="flex: 3;">{{detailAddress}}</view>
+          </view>
+          <view class="table-header">
+            <view class="table-cell" style="flex: 4;">结算信息</view>
+          </view>
+          <view class="table-row">
+            <view class="table-cell label-cell">入账户名</view>
+            <view class="table-cell value-cell">{{bankAccountName}}</view>
+            <view class="table-cell label-cell">身份证号</view>
+            <view class="table-cell value-cell">{{idCardNumber}}</view>
+          </view>
+          <view class="table-row">
+            <view class="table-cell label-cell">入款账号</view>
+            <view class="table-cell value-cell">{{bankCardNumber}}</view>
+            <view class="table-cell label-cell">有效期</view>
+            <view class="table-cell value-cell">{{idCardValidity}}</view>
+          </view>
+          <view class="table-row single-cell-row">
+            <view class="table-cell label-cell">开户行</view>
+            <view class="table-cell value-cell" style="flex: 3;">{{bankCityText}} {{bankName}}</view>
+          </view>
+          <view class="table-header">
+            <view class="table-cell" style="flex: 4;">商户信息</view>
+          </view>
+          <view class="table-row">
+            <view class="table-cell label-cell">签购单名称</view>
+            <view class="table-cell value-cell">{{merchantName}}</view>
+            <view class="table-cell label-cell">对账单邮箱</view>
+            <view class="table-cell value-cell">{{email}}</view>
+          </view>
+          <view class="table-row">
+            <view class="table-cell label-cell">联系人</view>
+            <view class="table-cell value-cell">{{idCardName}}</view>
+            <view class="table-cell label-cell">商户类别</view>
+            <view class="table-cell value-cell">{{merchantTypeText}}</view>
+          </view>
+          <view class="table-row">
+            <view class="table-cell label-cell">手机号</view>
+            <view class="table-cell value-cell">{{phoneNumber}}</view>
+            <view class="table-cell label-cell">商户地址</view>
+            <view class="table-cell value-cell">{{regionText}} {{detailAddress}}</view>
+          </view>
+        </view>
+        <text class="agreement-paragraph no-indent" style="font-weight: 600; margin-top: 16rpx;">附件二</text>
+        <text class="agreement-paragraph no-indent" style="font-weight: 600;">授权书（数据处理方）</text>
+        <text class="agreement-paragraph">鉴于：我方为拉卡拉支付股份有限公司（简称"拉卡拉"）的特约商户，已与拉卡拉签订《特约商户支付服务合作协议》。</text>
+        <text class="agreement-paragraph">我方同意并指定【拉卡拉支付股份有限公司】（含其分支机构和总公司，以下简称"数据处理方"）为我方提供数据处理服务，同意并授权数据处理方为终端布放与受理标识张贴、终端维护、商户培训、耗材配送、交易证明材料调取、对账目的收集、存储并向拉卡拉传送我方通过线下或线上方式提供的入网信息（包括但不限于《拉卡拉商户注册表》中的信息、商户提交的电子及纸质版资料以及监管部门要求的其他信息），同意并授权拉卡拉将我方金融信息（包括我方企业名称、统一社会信用代码、法定代表人姓名及证件号码、经营地址、联系人姓名及证件号码、联系人手机号、联系人电子邮箱、结算账户信息、交易数据、入账信息、对账单明细数据，下同）提供给数据处理方，并同意数据处理方处理前述我方相关信息。</text>
+        <text class="agreement-paragraph">我方同意并授权拉卡拉直接或通过数据处理方接收并按以下方式使用我方信息：将我方通过线下或线上方式提供的入网信息（包括但不限于《拉卡拉商户注册登记表》中的信息、商户提交的电子及纸质版资料以及监管部门要求的其他信息）用于拉卡拉支付业务特约商户入网审核、反洗钱管理、实名制管理、风控评估。</text>
+        <text class="agreement-paragraph">同时，我方同意并授权拉卡拉以加密传输方式将我方信息共享给具备提供验证服务资质的第三方机构进行一致性比对并输出核验结果，同意并授权第三方机构使用我方的信息用于验证服务并以加密传输的方式向拉卡拉返回核验结果。</text>
+        <text class="agreement-paragraph">本授权书有效期与《特约商户支付服务合作协议》一致。授权期限：自本授权书生效之日起至我方与拉卡拉在《特约商户支付服务合作协议》项下合作终止之日止。</text>
+        <text class="agreement-paragraph no-indent">授权声明</text>
+        <text class="agreement-paragraph">我方同意并授权拉卡拉直接或通过数据处理方接收并按以下方式使用我方信息：将我方通过线下或线上方式提供的入网信息（包括但不限于《拉卡拉商户注册登记表》中的信息、商户提交的电子及纸质版资料以及监管部门要求的其他信息）用于拉卡拉支付业务特约商户入网审核、反洗钱管理、实名制管理、风控评估。</text>
+        <text class="agreement-paragraph">同时，我方同意并授权拉卡拉以加密传输方式将我方信息共享给具备提供验证服务资质的第三方机构进行一致性比对并输出核验结果，同意并授权第三方机构使用我方的信息用于验证服务并以加密传输的方式向拉卡拉返回核验结果。</text>
+        <text class="agreement-paragraph">本授权书有效期与《特约商户支付服务合作协议》一致。授权期限：自本授权书生效之日起至我方与拉卡拉在《特约商户支付服务合作协议》项下合作终止之日止。</text>
+        <view class="agreement-checkbox">
+          <view class="checkbox {{agreementRead ? 'checked' : ''}}" bindtap="toggleAgreementRead">
+          <text class="checkbox-text">✓</text>
+        </view>
+          <text class="checkbox-label">已阅读</text>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="modal-footer">
+      <button class="modal-btn cancel-btn" bindtap="closeAgreementModal">取消</button>
+      <button class="modal-btn sign-btn" bindtap="openSignaturePad" disabled="{{!agreementRead || !countdownComplete}}">
+        {{!countdownComplete ? '阅读' + countdown + '秒后可签署' : '签署'}}
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 签名模态框 -->
+<view wx:if="{{showSignaturePad}}" class="modal-overlay" bindtap="closeSignaturePad"></view>
+<view wx:if="{{showSignaturePad}}" class="modal-container signature-container">
+  <view class="modal-header">
+    <text class="modal-title">电子协议</text>
+    <text class="modal-close" bindtap="closeSignaturePad">×</text>
+  </view>
+  <view class="modal-content signature-content">
+    <view class="signature-checkbox">
+      <view class="checkbox {{agreementRead ? 'checked' : ''}}" bindtap="toggleAgreementRead">
+        <text class="checkbox-text">✓</text>
+      </view>
+      <text class="checkbox-label">已阅读</text>
+    </view>
+    <view class="signature-prompt">请在下方手写签名</view>
+    <view class="signature-prompt-container">
+      <text class="signature-prompt-text">请在下方手写签名</text>
+      <text class="clear-btn" bindtap="clearSignature">清除</text>
+    </view>
+    <view class="canvas-wrapper">
+      <canvas
+        id="signatureCanvas"
+        class="signature-canvas"
+        canvas-id="signatureCanvas"
+        width="600"
+        height="300"
+        bindtouchstart="startSignature"
+        bindtouchmove="moveSignature"
+        bindtouchend="endSignature"
+        disable-scroll="true"
+      ></canvas>
+    </view>
+    <view class="modal-footer">
+      <button class="modal-btn cancel-btn" bindtap="closeSignaturePad">取消</button>
+      <button class="modal-btn confirm-btn" bindtap="confirmSignature">签署协议</button>
+    </view>
+  </view>
+</view>

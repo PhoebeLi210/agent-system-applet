@@ -1,0 +1,25 @@
+<view class="signature-pad" wx:if="{{visible}}">
+  <view class="mask" bindtap="onCancel"></view>
+  <view class="pad-container">
+    <view class="pad-header">
+      <text class="pad-btn cancel" bindtap="onCancel">取消</text>
+      <text class="pad-title">请签名</text>
+      <text class="pad-btn clear" bindtap="onClear">清除</text>
+    </view>
+    
+    <view class="pad-content">
+      <canvas type="2d" 
+              class="signature-canvas" 
+              id="signatureCanvas"
+              bindtouchstart="onTouchStart"
+              bindtouchmove="onTouchMove"
+              bindtouchend="onTouchEnd"></canvas>
+      
+      <view class="tip">请在上方区域签名</view>
+    </view>
+    
+    <view class="pad-footer">
+      <button class="pad-btn confirm" bindtap="onConfirm">确认签名</button>
+    </view>
+  </view>
+</view>

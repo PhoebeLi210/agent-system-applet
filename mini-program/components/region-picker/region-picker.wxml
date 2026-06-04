@@ -1,0 +1,34 @@
+<view class="region-picker" wx:if="{{visible}}">
+  <view class="mask" bindtap="onCancel"></view>
+  <view class="picker-container">
+    <view class="picker-header">
+      <text class="picker-btn cancel" bindtap="onCancel">取消</text>
+      <text class="picker-title">选择地区</text>
+      <text class="picker-btn confirm" bindtap="onConfirm">确定</text>
+    </view>
+    
+    <view class="picker-tabs">
+      <view class="tab {{activeTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-index="0">
+        <text>{{selectedProvince ? selectedProvince.name : '请选择'}}</text>
+      </view>
+      <view class="tab {{activeTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-index="1" wx:if="{{selectedProvince}}">
+        <text>{{selectedCity ? selectedCity.name : '请选择'}}</text>
+      </view>
+      <view class="tab {{activeTab === 2 ? 'active' : ''}}" bindtap="switchTab" data-index="2" wx:if="{{selectedCity}}">
+        <text>{{selectedDistrict ? selectedDistrict.name : '请选择'}}</text>
+      </view>
+    </view>
+    
+    <scroll-view class="picker-list" scroll-y scroll-into-view="{{scrollIntoView}}">
+      <view class="picker-item {{item.name === (activeTab === 0 ? selectedProvince?.name : activeTab === 1 ? selectedCity?.name : selectedDistrict?.name) ? 'selected' : ''}}" 
+            wx:for="{{currentList}}" 
+            wx:key="code"
+            id="item-{{index}}"
+            bindtap="selectItem" 
+            data-item="{{item}}">
+        <text>{{item.name}}</text>
+        <text class="check-icon" wx:if="{{item.name === (activeTab === 0 ? selectedProvince?.name : activeTab === 1 ? selectedCity?.name : selectedDistrict?.name)}}">✓</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>

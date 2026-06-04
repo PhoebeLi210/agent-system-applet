@@ -1,0 +1,66 @@
+<view class="container">
+  <!-- 提示信息 -->
+  <view class="tip-box">
+    <text class="tip-text">请按照以下步骤完成注册</text>
+  </view>
+
+  <!-- 步骤1：关注公众号 -->
+  <view class="card">
+    <view class="step-item">
+      <view class="step-number">1</view>
+      <view class="step-content">
+        <view class="step-title">关注官方公众号</view>
+        <view class="step-desc">长按识别下方二维码，关注官方公众号以获取审核进度通知</view>
+      </view>
+    </view>
+
+    <!-- 公众号二维码 -->
+    <view class="qrcode-container">
+      <image
+        class="qrcode-image"
+        src="{{subscribeQrcode}}"
+        mode="aspectFit"
+        bindtap="showQrcodeModal"
+        bindlongpress="onQrcodeLongPress"
+        show-menu-by-longpress
+      />
+      <text class="qrcode-tip">长按识别二维码关注</text>
+    </view>
+  </view>
+
+  <!-- 步骤2：完成注册 -->
+  <view class="card">
+    <view class="step-item">
+      <view class="step-number">2</view>
+      <view class="step-content">
+        <view class="step-title">填写注册信息</view>
+        <view class="step-desc">关注后点击下方按钮，填写商户注册信息完成入驻</view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <button class="btn btn-primary" bindtap="checkSubscribe">
+      我已关注，继续注册
+    </button>
+
+    <button class="btn btn-outline" bindtap="showQrcodeModal">
+      重新查看二维码
+    </button>
+  </view>
+
+  <!-- 底部提示 -->
+  <view style="text-align: center; padding: 40rpx 0;">
+    <text style="font-size: 24rpx; color: #999;">
+      如有问题，请联系您的业务经理
+    </text>
+  </view>
+
+  <!-- 二维码预览模态框 -->
+  <view class="qrcode-modal" wx:if="{{showQrcodeModal}}" bindtap="hideQrcodeModal">
+    <view class="qrcode-modal-content" catchtap="preventTap">
+      <image class="qrcode-modal-image" src="{{subscribeQrcode}}" mode="aspectFit" />
+      <text class="qrcode-modal-tip">长按识别二维码关注</text>
+      <view class="qrcode-modal-close" bindtap="hideQrcodeModal">关闭</view>
+    </view>
+  </view>
+</view>

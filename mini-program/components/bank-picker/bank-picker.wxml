@@ -1,0 +1,33 @@
+<view class="bank-picker" wx:if="{{visible}}">
+  <view class="mask" bindtap="onCancel"></view>
+  <view class="picker-container">
+    <view class="picker-header">
+      <text class="picker-btn cancel" bindtap="onCancel">取消</text>
+      <text class="picker-title">选择银行</text>
+      <text class="picker-btn confirm" bindtap="onConfirm">确定</text>
+    </view>
+    
+    <view class="search-box">
+      <input class="search-input" 
+             placeholder="搜索银行名称" 
+             value="{{searchKeyword}}" 
+             bindinput="onSearchInput" />
+      <text class="search-icon">🔍</text>
+    </view>
+    
+    <scroll-view class="picker-list" scroll-y scroll-into-view="{{scrollIntoView}}">
+      <view class="picker-item {{item.code === selectedBank?.code ? 'selected' : ''}}" 
+            wx:for="{{filteredBanks}}" 
+            wx:key="code"
+            id="item-{{index}}"
+            bindtap="selectItem" 
+            data-item="{{item}}">
+        <text>{{item.name}}</text>
+        <text class="check-icon" wx:if="{{item.code === selectedBank?.code}}">✓</text>
+      </view>
+      <view class="empty-tip" wx:if="{{filteredBanks.length === 0}}">
+        <text>未找到匹配的银行</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>

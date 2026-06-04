@@ -1,0 +1,210 @@
+<view class="container">
+  <view class="header">
+    <view style="width: 48rpx;"></view>
+    <text class="header-title">商户入网</text>
+    <view class="more-btn"></view>
+  </view>
+  
+  <view class="progress-bar">
+    <view class="progress-step" style="cursor: pointer;" bindtap="goToMerchant">
+      <view class="progress-icon active icon-id-card"></view>
+      <view class="progress-label active">证照信息</view>
+    </view>
+    <view class="progress-line active"></view>
+    <view class="progress-step" style="cursor: pointer;" bindtap="goToMerchant">
+      <view class="progress-icon active icon-store"></view>
+      <view class="progress-label active">商户信息</view>
+    </view>
+    <view class="progress-line active"></view>
+    <view class="progress-step" style="cursor: pointer;">
+      <view class="progress-icon active icon-wallet"></view>
+      <view class="progress-label active">账户信息</view>
+    </view>
+    <view class="progress-line inactive"></view>
+    <view class="progress-step" style="cursor: not-allowed; opacity: 0.6;">
+      <view class="progress-icon inactive icon-percentage"></view>
+      <view class="progress-label">费率信息</view>
+    </view>
+  </view>
+  
+  <view class="content">
+    <view class="section">
+      <view style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12rpx;">
+        <view style="display: flex; align-items: center; gap: 12rpx;">
+          <view style="width: 8rpx; height: 32rpx; background-color: #3b82f6; border-radius: 4rpx;"></view>
+          <text style="font-size: 32rpx; font-weight: 600; color: #1e293b;">账户信息</text>
+        </view>
+        <view style="display: flex; align-items: center; gap: 24rpx;">
+          <view class="radio-item" bindtap="onAccountTypeChange" data-type="public">
+            <view class="radio {{accountType === 'public' ? 'radio-checked' : ''}}">
+              <view class="radio-inner {{accountType === 'public' ? 'radio-inner-checked' : ''}}"></view>
+            </view>
+            <text class="radio-label">对公</text>
+          </view>
+          <view class="radio-item" bindtap="onAccountTypeChange" data-type="private">
+            <view class="radio {{accountType === 'private' ? 'radio-checked' : ''}}">
+              <view class="radio-inner {{accountType === 'private' ? 'radio-inner-checked' : ''}}"></view>
+            </view>
+            <text class="radio-label">对私</text>
+          </view>
+        </view>
+      </view>
+      
+      <view style="display: flex; justify-content: flex-end; margin-bottom: 12rpx;">
+        <text class="example-text" bindtap="showAccountExample" style="font-size: 26rpx; color: #3b82f6; text-decoration: underline;">示例图</text>
+      </view>
+      
+      <view class="form-group" style="margin-bottom: 8rpx;">
+        <view class="upload-section">
+          <view class="upload-box" bindtap="chooseImage" data-type="{{accountType === 'public' ? 'accountMaterial' : 'bankCard'}}" style="width: 100%; border: 2rpx dashed #d1d5db; border-radius: 16rpx; padding: 40rpx; text-align: center; background-color: #f9fafb; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;">
+            <image wx:if="{{accountType === 'public' ? accountMaterialImage : bankCardImage}}" src="{{accountType === 'public' ? accountMaterialImage : bankCardImage}}" class="uploaded-image" mode="aspectFill" />
+            <view wx:else class="upload-content">
+              <view class="upload-icon" style="font-size: 28rpx; color: #9ca3af; margin-bottom: 4rpx;">📷</view>
+              <text class="upload-text" style="font-size: 24rpx; color: #4b5563; margin: 0 0 4rpx 0;">{{accountType === 'public' ? '请上传账户材料照片' : '请上传银行卡照片'}}</text>
+              <text class="upload-text" style="font-size: 18rpx; color: #f59e0b; margin: 0;">{{accountType === 'public' ? '*账户材料包括基本存款账户或一般结算账户证明材料' : '*请上传银行卡正面照片'}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <view class="form-group" style="display: flex; justify-content: space-between; align-items: center; padding: 0; border-bottom: 2rpx solid #f1f5f9;">
+        <text style="font-size: 26rpx; color: #475569;">开户名</text>
+        <input type="text" class="form-input" placeholder="请输入开户名" value="{{accountName}}" data-field="accountName" bindinput="onInputChange" style="font-size: 26rpx; color: #94a3b8; border: none; outline: none; text-align: right; background: transparent; padding: 8rpx 0; width: 360rpx;" />
+      </view>
+      
+      <view class="form-group" style="display: flex; justify-content: space-between; align-items: center; padding: 0; border-bottom: 2rpx solid #f1f5f9;">
+        <text style="font-size: 26rpx; color: #475569;">银行卡号</text>
+        <input type="text" class="form-input" placeholder="请输入银行卡号" value="{{bankCardNumber}}" data-field="bankCardNumber" bindinput="onInputChange" style="font-size: 26rpx; color: #94a3b8; border: none; outline: none; text-align: right; background: transparent; padding: 8rpx 0; width: 360rpx;" />
+      </view>
+      
+      <view class="form-group" style="display: flex; justify-content: space-between; align-items: center; padding: 0; border-bottom: 2rpx solid #f1f5f9;">
+        <text style="font-size: 26rpx; color: #475569;">开户城市</text>
+        <view style="display: flex; align-items: center; flex: 1; justify-content: flex-end;" bindtap="openRegionPicker">
+          <input type="text" class="form-input" placeholder="请选择开户城市" value="{{bankCityText}}" readonly style="font-size: 26rpx; color: #94a3b8; border: none; outline: none; text-align: right; background: transparent; padding: 8rpx 0; width: 280rpx;" />
+          <text class="location-icon" style="font-size: 28rpx; color: #94a3b8; margin-left: 8rpx;">📍</text>
+        </view>
+      </view>
+      
+      <view class="form-group" style="display: flex; justify-content: space-between; align-items: center; padding: 0;">
+        <text style="font-size: 26rpx; color: #475569;">开户行</text>
+        <view style="display: flex; align-items: center; flex: 1; justify-content: flex-end;" bindtap="openBankPicker">
+          <input type="text" class="form-input" placeholder="请选择开户行" value="{{bankName}}" readonly style="font-size: 26rpx; color: #94a3b8; border: none; outline: none; text-align: right; background: transparent; padding: 8rpx 0; width: 280rpx;" />
+          <text class="location-icon" style="font-size: 28rpx; color: #94a3b8; margin-left: 8rpx;">🔍</text>
+          <text wx:if="{{bankName}}" class="location-icon" style="font-size: 28rpx; color: #94a3b8; margin-left: 8rpx;" catchtap="clearBankName">✕</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <button class="next-btn" bindtap="goToNext">下一步</button>
+</view>
+
+<!-- 开户城市选择器 -->
+<view wx:if="{{showRegionPicker}}" class="modal-overlay" bindtap="closeRegionPicker"></view>
+<view wx:if="{{showRegionPicker}}" class="region-selector-container">
+  <view class="region-selector-header">
+    <text style="font-size: 32rpx; font-weight: 600; color: #1e293b;">请选择开户城市</text>
+    <text style="background: none; border: none; font-size: 48rpx; color: #64748b; padding: 0; width: 64rpx; height: 64rpx; display: flex; align-items: center; justify-content: center; border-radius: 8rpx;" bindtap="closeRegionPicker">×</text>
+  </view>
+  
+  <view class="region-selector-tabs">
+    <view class="region-tab {{regionTab === 'province' ? 'active' : ''}}" bindtap="switchRegionTab" data-tab="province">省份</view>
+    <view class="region-tab {{regionTab === 'city' ? 'active' : ''}}" bindtap="switchRegionTab" data-tab="city">城市</view>
+  </view>
+  
+  <view class="region-selector-content">
+    <view wx:if="{{regionTab === 'province'}}" class="region-list" style="display: block; padding: 16rpx;">
+      <view wx:for="{{provinces}}" wx:key="index" class="region-item {{selectedProvince === item.name ? 'selected' : ''}}" bindtap="selectProvince" data-province="{{item.name}}" data-index="{{index}}">{{item.name}}</view>
+    </view>
+    <view wx:if="{{regionTab === 'city'}}" class="region-list" style="display: block; padding: 16rpx;">
+      <view wx:for="{{cities}}" wx:key="index" class="region-item {{selectedCity === item ? 'selected' : ''}}" bindtap="selectCity" data-city="{{item}}" data-index="{{index}}">{{item}}</view>
+    </view>
+  </view>
+</view>
+
+<!-- 开户行选择器 -->
+<view wx:if="{{showBankPicker}}" class="modal-overlay" bindtap="closeBankPicker"></view>
+<view wx:if="{{showBankPicker}}" class="region-selector-container">
+  <view class="region-selector-header">
+    <text style="font-size: 32rpx; font-weight: 600; color: #1e293b;">请选择开户行</text>
+    <text style="background: none; border: none; font-size: 48rpx; color: #64748b; padding: 0; width: 64rpx; height: 64rpx; display: flex; align-items: center; justify-content: center; border-radius: 8rpx;" bindtap="closeBankPicker">×</text>
+  </view>
+  
+  <view style="padding: 24rpx;">
+    <view style="position: relative;">
+      <input type="text" class="search-input" placeholder="请输入搜索支行关键词" value="{{bankSearch}}" bindinput="onBankSearchChange" style="width: 100%; padding: 20rpx 72rpx 20rpx 24rpx; border: 2rpx solid #e2e8f0; border-radius: 16rpx; font-size: 28rpx; outline: none; background-color: #f8fafc;" />
+      <text style="position: absolute; right: 24rpx; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 28rpx;">🔍</text>
+    </view>
+  </view>
+  
+  <view class="region-selector-content">
+    <view class="region-list" style="padding: 16rpx;">
+      <view wx:for="{{filteredBanks}}" wx:key="index" class="region-item" bindtap="selectBank" data-bank="{{item.name}}">{{item.name}}</view>
+      <view class="region-item" style="border: 2rpx dashed #3b82f6; background-color: #f0f9ff;" bindtap="openCustomBankInput">其他银行（手动输入）</view>
+    </view>
+  </view>
+</view>
+
+<!-- 自定义银行输入框 -->
+<view wx:if="{{showCustomBankInput}}" class="modal-overlay" bindtap="closeCustomBankInput"></view>
+<view wx:if="{{showCustomBankInput}}" class="modal-container">
+  <view class="modal-header">
+    <text class="modal-title">输入开户行</text>
+    <text class="modal-close" bindtap="closeCustomBankInput">×</text>
+  </view>
+  <view class="modal-content">
+    <input type="text" class="custom-bank-input" placeholder="请输入开户行名称" value="{{customBankName}}" bindinput="onCustomBankChange" style="width: 100%; height: 80rpx; padding: 0 24rpx; border: 2rpx solid #e2e8f0; border-radius: 16rpx; font-size: 28rpx; background-color: #f8fafc; margin-bottom: 32rpx;" />
+    <view class="modal-footer">
+      <button class="modal-btn cancel-btn" bindtap="closeCustomBankInput">取消</button>
+      <button class="modal-btn confirm-btn" bindtap="confirmCustomBank">确定</button>
+    </view>
+  </view>
+</view>
+
+<!-- 示例图模态框 -->
+<view wx:if="{{showAccountExampleModal}}" class="example-overlay" bindtap="closeAccountExample"></view>
+<view wx:if="{{showAccountExampleModal}}" class="example-modal">
+  <view class="example-header">
+    <text class="example-title">{{accountType === 'public' ? '账户材料照片示例' : '银行卡示例'}}</text>
+    <text class="example-close" bindtap="closeAccountExample">×</text>
+  </view>
+  <view class="example-content">
+    <view class="example-images">
+      <view class="example-image" style="width: 100%;">
+        <block wx:if="{{accountType === 'public'}}">
+          <view class="account-material-wrapper">
+            <view class="account-material-inner">
+              <text class="account-material-text">账户材料</text>
+              <view class="account-material-lines">
+                <view class="account-material-line"></view>
+                <view class="account-material-line"></view>
+                <view class="account-material-line"></view>
+                <view class="account-material-line"></view>
+              </view>
+            </view>
+          </view>
+          <text class="example-caption" style="margin-top: 16rpx;">账户材料</text>
+        </block>
+        <block wx:else>
+          <view class="bank-card-wrapper">
+            <view class="bank-card-inner">
+              <view class="bank-card-header">
+                <view class="bank-card-chip"></view>
+              </view>
+              <view class="bank-card-body">
+                <view class="bank-card-line"></view>
+                <view class="bank-card-line"></view>
+                <view class="bank-card-line"></view>
+                <view class="bank-card-line"></view>
+              </view>
+              <view class="bank-card-footer">
+                <text class="bank-card-name">银行卡</text>
+              </view>
+            </view>
+          </view>
+          <text class="example-caption" style="margin-top: 16rpx;">银行卡正面</text>
+        </block>
+      </view>
+    </view>
+  </view>
+</view>

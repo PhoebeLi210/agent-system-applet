@@ -1,0 +1,39 @@
+{
+  "libVersion": "3.15.1",
+  "projectname": "mini-program",
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/guide/guide",
+          "pathName": "pages/guide/guide",
+          "query": "scene=agent=T6FAPXF3",
+          "scene": null,
+          "launchMode": "default",
+          "partialCompile": {
+            "enabled": true,
+            "pages": []
+          }
+        }
+      ]
+    }
+  },
+  "setting": {
+    "urlCheck": false,
+    "coverView": true,
+    "lazyloadPlaceholderEnable": false,
+    "skylineRenderEnable": false,
+    "preloadBackgroundData": false,
+    "autoAudits": false,
+    "useApiHook": true,
+    "showShadowRootInWxmlPanel": true,
+    "useStaticServer": false,
+    "useLanDebug": false,
+    "showES6CompileOption": false,
+    "compileHotReLoad": true,
+    "checkInvalidKey": true,
+    "ignoreDevUnusedFiles": true,
+    "bigPackageSizeSupport": false,
+    "useIsolateContext": true
+  }
+}

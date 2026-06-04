@@ -1,0 +1,42 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run remote deploy commands over SSH
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          port: ${{ secrets.SERVER_PORT || '22' }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            set -e
+            # Ensure target dir exists
+            mkdir -p ${SERVER_PATH:-/www/wwwroot/agent-system}
+            cd ${SERVER_PATH:-/www/wwwroot/agent-system}
+            # If repo not cloned, clone it
+            if [ ! -d ".git" ]; then
+              git clone --depth 1 --branch main https://github.com/${{ github.repository }} .
+            else
+              git fetch origin main
+              git reset --hard origin/main
+            fi
+            # Make sure deploy script is executable
+            if [ -f ./deploy.sh ]; then
+              chmod +x ./deploy.sh
+              ./deploy.sh
+            else
+              echo "deploy.sh not found in repo root on server"
+              exit 1
+            fi
+
+      # Note: this workflow assumes the server has git, node, npm and pm2 preinstalled.

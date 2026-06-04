@@ -1,0 +1,38 @@
+<view class="merchant-type-picker" wx:if="{{visible}}">
+  <view class="mask" bindtap="onCancel"></view>
+  <view class="picker-container">
+    <view class="picker-header">
+      <text class="picker-btn cancel" bindtap="onCancel">取消</text>
+      <text class="picker-title">选择商户类型</text>
+      <text class="picker-btn confirm" bindtap="onConfirm">确定</text>
+    </view>
+    
+    <view class="picker-content">
+      <scroll-view class="category-list" scroll-y scroll-into-view="{{categoryScrollIntoView}}">
+        <view class="category-item {{item.code === selectedCategory?.code ? 'active' : ''}}" 
+              wx:for="{{categories}}" 
+              wx:key="code"
+              id="category-{{index}}"
+              bindtap="selectCategory" 
+              data-category="{{item}}">
+          <text>{{item.name}}</text>
+        </view>
+      </scroll-view>
+      
+      <scroll-view class="subcategory-list" scroll-y scroll-into-view="{{subcategoryScrollIntoView}}">
+        <view class="subcategory-item {{item.code === selectedSubcategory?.code ? 'active' : ''}}" 
+              wx:for="{{subcategories}}" 
+              wx:key="code"
+              id="subcategory-{{index}}"
+              bindtap="selectSubcategory" 
+              data-subcategory="{{item}}">
+          <text>{{item.name}}</text>
+          <text class="check-icon" wx:if="{{item.code === selectedSubcategory?.code}}">✓</text>
+        </view>
+        <view class="empty-tip" wx:if="{{subcategories.length === 0}}">
+          <text>请先选择大类</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

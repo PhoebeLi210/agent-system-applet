@@ -1,0 +1,31 @@
+<view class="date-picker" wx:if="{{visible}}">
+  <view class="mask" bindtap="onCancel"></view>
+  <view class="picker-container">
+    <view class="picker-header">
+      <text class="picker-btn cancel" bindtap="onCancel">取消</text>
+      <text class="picker-title">选择日期</text>
+      <text class="picker-btn confirm" bindtap="onConfirm">确定</text>
+    </view>
+    
+    <picker-view class="picker-view" 
+                indicator-style="height: 80rpx;" 
+                value="{{pickerValue}}" 
+                bindchange="onPickerChange">
+      <picker-view-column>
+        <view class="picker-item" wx:for="{{years}}" wx:key="*this">
+          <text>{{item}}年</text>
+        </view>
+      </picker-view-column>
+      <picker-view-column>
+        <view class="picker-item" wx:for="{{months}}" wx:key="*this">
+          <text>{{item}}月</text>
+        </view>
+      </picker-view-column>
+      <picker-view-column>
+        <view class="picker-item" wx:for="{{days}}" wx:key="*this">
+          <text>{{item}}日</text>
+        </view>
+      </picker-view-column>
+    </picker-view>
+  </view>
+</view>

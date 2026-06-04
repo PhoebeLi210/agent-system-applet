@@ -1,0 +1,16 @@
+<view class="container">
+  <view class="success-container">
+    <view class="close-btn" bindtap="closePage">
+      <text class="close-icon">×</text>
+    </view>
+    
+    <view class="success-icon">
+      <text class="check-icon">✓</text>
+    </view>
+    
+    <text class="success-title">提交成功！</text>
+    <text class="success-message">提交成功，请等待审核。</text>
+    
+    <button class="action-btn" bindtap="clearStorageAndClose">请关闭页面</button>
+  </view>
+</view>

@@ -1,0 +1,177 @@
+/* 引导页特有样式 */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.9) 0%, rgba(219, 234, 254, 0.6) 30%, rgba(241, 245, 249, 0.8) 100%);
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.tip-box {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.06);
+}
+
+.tip-text {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.06);
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 24rpx;
+}
+
+.step-number {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 600;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 10rpx;
+}
+
+.step-desc {
+  font-size: 30rpx;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.qrcode-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30rpx 0;
+}
+
+.qrcode-image {
+  width: 400rpx;
+  height: 400rpx;
+  background-color: #fff;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  margin-bottom: 16rpx;
+}
+
+.qrcode-tip {
+  font-size: 24rpx;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.btn {
+  width: 100%;
+  height: 96rpx;
+  border-radius: 16rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: #fff;
+  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.25);
+}
+
+.btn-outline {
+  background-color: #fff;
+  color: #3b82f6;
+  border: 2rpx solid #3b82f6;
+  box-shadow: none;
+}
+
+.btn-primary:active {
+  background-color: #2563eb;
+}
+
+.btn-outline:active {
+  background-color: #f0f8ff;
+  border-color: #2563eb;
+}
+
+/* 二维码预览模态框 */
+.qrcode-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.qrcode-modal-content {
+  background-color: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600rpx;
+  width: 90%;
+}
+
+.qrcode-modal-image {
+  width: 500rpx;
+  height: 500rpx;
+  margin-bottom: 30rpx;
+}
+
+.qrcode-modal-tip {
+  font-size: 28rpx;
+  color: #64748b;
+  margin-bottom: 30rpx;
+}
+
+.qrcode-modal-close {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  background-color: #f1f5f9;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+  color: #334155;
+}

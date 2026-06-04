@@ -1,0 +1,218 @@
+<view class="container">
+  <view class="header">
+    <view style="width: 48rpx;"></view>
+    <text class="header-title">商户入网</text>
+    <view class="more-btn"></view>
+  </view>
+  
+  <view class="progress-bar">
+    <view class="progress-step" style="cursor: pointer;">
+      <view class="progress-icon active icon-id-card"></view>
+      <view class="progress-label active">证照信息</view>
+    </view>
+    <view class="progress-line active"></view>
+    <view class="progress-step" style="cursor: pointer; opacity: 0.6;">
+      <view class="progress-icon inactive icon-store"></view>
+      <view class="progress-label">商户信息</view>
+    </view>
+    <view class="progress-line inactive"></view>
+    <view class="progress-step" style="cursor: not-allowed; opacity: 0.6;">
+      <view class="progress-icon inactive icon-wallet"></view>
+      <view class="progress-label">账户信息</view>
+    </view>
+    <view class="progress-line inactive"></view>
+    <view class="progress-step" style="cursor: not-allowed; opacity: 0.6;">
+      <view class="progress-icon inactive icon-percentage"></view>
+      <view class="progress-label">费率信息</view>
+    </view>
+  </view>
+  
+  <view class="content">
+    <view class="section merchant-type-section">
+      <view class="section-title">商户类型</view>
+      <view class="radio-group">
+        <view class="radio-item" bindtap="onMerchantTypeChange" data-type="micro">
+          <view class="radio {{form.merchantType === 'micro' ? 'radio-checked' : ''}}">
+            <view class="radio-inner {{form.merchantType === 'micro' ? 'radio-inner-checked' : ''}}"></view>
+          </view>
+          <label class="radio-label">小微</label>
+        </view>
+        <view class="radio-item" bindtap="onMerchantTypeChange" data-type="enterprise">
+          <view class="radio {{form.merchantType === 'enterprise' ? 'radio-checked' : ''}}">
+            <view class="radio-inner {{form.merchantType === 'enterprise' ? 'radio-inner-checked' : ''}}"></view>
+          </view>
+          <label class="radio-label">企业</label>
+        </view>
+      </view>
+    </view>
+    
+    <view class="section" wx:if="{{form.merchantType === 'enterprise'}}">
+      <view class="legal-person-header">
+        <view class="section-title">营业执照信息</view>
+        <text class="example-text" bindtap="showBusinessLicenseExample">示例图</text>
+      </view>
+      <view class="upload-section">
+        <view class="upload-box" bindtap="chooseImage" data-type="license">
+          <image wx:if="{{images.license}}" class="uploaded-image" src="{{images.license}}" mode="aspectFill" bindtap="previewImage" data-type="license" />
+          <view wx:else class="upload-content">
+            <view class="upload-icon"><text class="upload-icon-text">+</text></view>
+            <view class="upload-text">请上传营业执照</view>
+            <view class="upload-text required">*请上传清晰的营业执照照片</view>
+          </view>
+        </view>
+      </view>
+      
+      <view class="form-group left-align">
+        <view>
+          <label class="form-label">营业执照号</label>
+        </view>
+        <input type="text" class="form-input left-align-input" placeholder="请输入营业执照号" value="{{form.licenseNumber}}" data-field="licenseNumber" bindinput="onInputChange" />
+      </view>
+      
+      <view class="form-group left-align">
+        <view>
+          <label class="form-label">营业执照名称</label>
+        </view>
+        <input type="text" class="form-input left-align-input" placeholder="请输入营业执照名称" value="{{form.licenseName}}" data-field="licenseName" bindinput="onInputChange" />
+      </view>
+      
+      <view class="form-group left-align">
+        <view style="display: flex; align-items: center;">
+          <label class="form-label">营业执照有效期</label>
+          <text class="validity-text" bindtap="toggleLicenseValidity">长期有效</text>
+        </view>
+        <picker mode="date" start="1900-01-01" end="2099-12-31" value="{{form.licenseValidity}}" bindchange="onLicenseValidityChange">
+          <view class="date-display">{{form.licenseValidity || '请选择营业执照有效期'}}</view>
+        </picker>
+      </view>
+    </view>
+    
+    <view class="section">
+      <view class="legal-person-header">
+        <view class="section-title">身份信息</view>
+        <text class="example-text" bindtap="showIdCardExample">示例图</text>
+      </view>
+      <view class="upload-section">
+        <view class="upload-box" bindtap="chooseImage" data-type="idCardFront">
+          <image wx:if="{{images.idCardFront}}" class="uploaded-image" src="{{images.idCardFront}}" mode="aspectFill" bindtap="previewImage" data-type="idCardFront" />
+          <view wx:else class="upload-content">
+            <view class="upload-icon icon-user"></view>
+            <view class="upload-text">请上传身份证人像面</view>
+            <view class="upload-text required">*请上传身份证人像面</view>
+          </view>
+        </view>
+        <view class="upload-box" bindtap="chooseImage" data-type="idCardBack">
+          <image wx:if="{{images.idCardBack}}" class="uploaded-image" src="{{images.idCardBack}}" mode="aspectFill" bindtap="previewImage" data-type="idCardBack" />
+          <view wx:else class="upload-content">
+            <view class="upload-icon icon-building"></view>
+            <view class="upload-text">请上传身份证国徽面</view>
+            <view class="upload-text required">*请上传身份证国徽面</view>
+          </view>
+        </view>
+      </view>
+      
+      <view class="form-group left-align">
+        <view>
+          <label class="form-label">姓名</label>
+        </view>
+        <input type="text" class="form-input left-align-input" placeholder="请输入姓名" value="{{form.idCardName}}" data-field="idCardName" bindinput="onInputChange" />
+      </view>
+
+      <view class="form-group left-align">
+        <view>
+          <label class="form-label">身份证号码</label>
+        </view>
+        <input type="text" class="form-input left-align-input" placeholder="请输入身份证号码" value="{{form.idCardNumber}}" data-field="idCardNumber" bindinput="onInputChange" />
+      </view>
+
+      <view class="form-group left-align">
+        <view>
+          <label class="form-label">身份证起始日期</label>
+        </view>
+        <picker mode="date" start="1900-01-01" end="2099-12-31" value="{{form.idCardStartDate}}" bindchange="onIdCardStartDateChange">
+          <view class="date-display">{{form.idCardStartDate || '请选择起始日期'}}</view>
+        </picker>
+      </view>
+
+      <view class="form-group left-align">
+        <view style="display: flex; align-items: center; flex: 1; justify-content: space-between;">
+          <view style="display: flex; align-items: center;">
+            <label class="form-label">身份证有效期</label>
+            <text class="validity-text" bindtap="toggleIdValidity">长期有效</text>
+          </view>
+          <picker bindchange="onIdValidityChange" value="{{idValidityIndex}}" range="{{idValidityOptions}}">
+            <view class="form-select">
+              {{idValidityOptions[idValidityIndex]}}
+            </view>
+          </picker>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <view class="page-spacer"></view>
+  <button class="next-btn" bindtap="goToNext">下一步</button>
+
+  <!-- 日期选择器 -->
+  <!-- 示例图模态框 -->
+  <view class="example-overlay" wx:if="{{showExampleModal}}" bindtap="closeExampleModal"></view>
+  <view class="example-modal" wx:if="{{showExampleModal}}">
+    <view class="example-header">
+      <text class="example-title">{{exampleTitle}}</text>
+      <view class="example-close" bindtap="closeExampleModal">×</view>
+    </view>
+    <view class="example-content">
+      <view class="example-images" wx:if="{{exampleImage === 'idcard'}}">
+        <view class="example-image">
+          <view class="example-image-placeholder">
+            <view class="id-card-front">
+              <view class="id-avatar">
+                <text>人</text>
+              </view>
+              <view class="id-lines">
+                <view class="id-line"></view>
+                <view class="id-line"></view>
+                <view class="id-line"></view>
+                <view class="id-line"></view>
+              </view>
+            </view>
+          </view>
+          <view class="example-caption">身份证人像面</view>
+        </view>
+        <view class="example-image">
+          <view class="example-image-placeholder">
+            <view class="id-card-back">
+              <view class="id-card-emblem">
+                <text>国</text>
+              </view>
+              <view class="id-lines">
+                <view class="id-line"></view>
+                <view class="id-line"></view>
+                <view class="id-line"></view>
+              </view>
+            </view>
+          </view>
+          <view class="example-caption">身份证国徽面</view>
+        </view>
+      </view>
+      <view class="example-images" wx:if="{{exampleImage === 'license'}}">
+        <view class="example-image" style="width: 100%;">
+          <view class="license-example-wrapper">
+            <view class="license-example-header">营业执照</view>
+            <view class="license-example-content">
+              <view class="license-line"></view>
+              <view class="license-line"></view>
+              <view class="license-line"></view>
+              <view class="license-line"></view>
+              <view class="license-line"></view>
+            </view>
+            <view class="license-example-footer">
+              <text class="license-date">年 月 日</text>
+            </view>
+          </view>
+          <view class="example-caption">营业执照</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

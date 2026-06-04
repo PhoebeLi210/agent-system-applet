@@ -1,0 +1,185 @@
+<view class="container">
+  <view class="header">
+    <view style="width: 48rpx;"></view>
+    <text class="header-title">商户入网</text>
+    <view class="more-btn"></view>
+  </view>
+  
+  <view class="progress-bar">
+    <view class="progress-step" style="cursor: pointer;" bindtap="goToRegister">
+      <view class="progress-icon active"><text class="progress-icon-text">1</text></view>
+      <view class="progress-label active">证照信息</view>
+    </view>
+    <view class="progress-line active"></view>
+    <view class="progress-step" style="cursor: pointer;">
+      <view class="progress-icon active"><text class="progress-icon-text">2</text></view>
+      <view class="progress-label active">商户信息</view>
+    </view>
+    <view class="progress-line inactive"></view>
+    <view class="progress-step" style="cursor: not-allowed; opacity: 0.6;">
+      <view class="progress-icon inactive"><text class="progress-icon-text">3</text></view>
+      <view class="progress-label">账户信息</view>
+    </view>
+    <view class="progress-line inactive"></view>
+    <view class="progress-step" style="cursor: not-allowed; opacity: 0.6;">
+      <view class="progress-icon inactive"><text class="progress-icon-text">4</text></view>
+      <view class="progress-label">费率信息</view>
+    </view>
+  </view>
+  
+  <view class="content">
+    <view class="section">
+      <view class="section-title">商户信息</view>
+      
+      <view class="form-group">
+        <view class="form-label">商户名称 <text style="color: #ef4444;">*</text></view>
+        <input type="text" class="form-input" placeholder="请遵循地级市加简称主营命名" value="{{form.merchantName}}" data-field="merchantName" bindinput="onInputChange" />
+      </view>
+      
+      <view class="form-group">
+        <view class="form-label">所选地区</view>
+        <view style="display: flex; align-items: center; justify-content: flex-end; flex: 1;">
+          <picker mode="region" bindchange="onRegionChange" bindcancel="onRegionCancel">
+            <view class="region-input">
+              <text class="region-text">{{form.regionText || '请选择所选地区'}}</text>
+            </view>
+          </picker>
+          <text class="location-icon">📍</text>
+        </view>
+      </view>
+      
+      <view class="form-group">
+        <view class="form-label">详细地址 <text style="color: #ef4444;">*</text></view>
+        <input type="text" class="form-input" placeholder="请输入详细地址" value="{{form.detailedAddress}}" data-field="detailedAddress" bindinput="onInputChange" />
+      </view>
+      
+      <view class="form-group">
+        <view class="form-label">商户类型</view>
+        <view style="display: flex; align-items: center; justify-content: flex-end; flex: 1;">
+          <view class="region-input" bindtap="openMerchantTypeSelector">
+            <text class="region-text">{{form.merchantTypeText || '请选择商户类型'}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="form-group">
+        <view class="form-label">手机号码 <text style="color: #ef4444;">*</text></view>
+        <input type="number" class="form-input" placeholder="请输入手机号码" value="{{form.phone}}" data-field="phone" bindinput="onInputChange" />
+      </view>
+      
+      <view class="form-group">
+        <view class="form-label">邮箱 <text class="optional">(非必填)</text></view>
+        <input type="text" class="form-input" placeholder="请输入邮箱" value="{{form.email}}" data-field="email" bindinput="onInputChange" />
+      </view>
+    </view>
+    
+    <view class="section">
+      <view class="section-title">店铺照片</view>
+      <view class="upload-section">
+        <view class="upload-left">
+          <view class="upload-box" bindtap="chooseImage" data-type="shopFront">
+            <image wx:if="{{form.shopFrontImage}}" class="uploaded-image" src="{{form.shopFrontImage}}" mode="aspectFill" />
+            <view wx:else class="upload-content">
+              <view class="upload-icon"><text class="upload-icon-text">+</text></view>
+              <view class="upload-text">门头照</view>
+              <view class="upload-text required">*请上传清晰的门头照</view>
+            </view>
+          </view>
+          <view class="upload-box" bindtap="chooseImage" data-type="shopInterior">
+            <image wx:if="{{form.shopInteriorImage}}" class="uploaded-image" src="{{form.shopInteriorImage}}" mode="aspectFill" />
+            <view wx:else class="upload-content">
+              <view class="upload-icon"><text class="upload-icon-text">+</text></view>
+              <view class="upload-text">商铺内照</view>
+              <view class="upload-text required">*请上传清晰的商铺内照</view>
+            </view>
+          </view>
+        </view>
+        <view class="upload-box cashier-box" bindtap="chooseImage" data-type="cashier">
+          <image wx:if="{{form.cashierImage}}" class="uploaded-image" src="{{form.cashierImage}}" mode="aspectFill" />
+          <view wx:else class="upload-content">
+            <view class="upload-icon"><text class="upload-icon-text">+</text></view>
+            <view class="upload-text">收银台照</view>
+            <view class="upload-text required">*请上传清晰的收银台照</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="section">
+      <view class="product-type-section">
+        <view class="section-title">产品类型</view>
+        <view class="radio-group-vertical">
+          <view class="radio-item" bindtap="selectProductType" data-type="qrCode">
+            <view class="radio {{form.productType === 'qrCode' ? 'radio-checked' : ''}}">
+              <view class="radio-inner {{form.productType === 'qrCode' ? 'radio-inner-checked' : ''}}"></view>
+            </view>
+            <label class="radio-label">二维码产品</label>
+          </view>
+          <view class="radio-item" bindtap="selectProductType" data-type="posMachine">
+            <view class="radio {{form.productType === 'posMachine' ? 'radio-checked' : ''}}">
+              <view class="radio-inner {{form.productType === 'posMachine' ? 'radio-inner-checked' : ''}}"></view>
+            </view>
+            <label class="radio-label">POS机产品</label>
+          </view>
+          <view class="radio-item" bindtap="selectProductType" data-type="other">
+            <view class="radio {{form.productType === 'other' ? 'radio-checked' : ''}}">
+              <view class="radio-inner {{form.productType === 'other' ? 'radio-inner-checked' : ''}}"></view>
+            </view>
+            <label class="radio-label">其他产品</label>
+          </view>
+        </view>
+      </view>
+      <view class="section-title product-photo-title">{{form.productType === 'other' ? '' : '二维码或TUSN码照片'}}</view>
+      <view class="upload-section product-photo-section" wx:if="{{form.productType !== 'other'}}">
+        <view class="upload-box product-photo-box" bindtap="chooseImage" data-type="productCode">
+          <image wx:if="{{form.productCodeImage}}" class="uploaded-image" src="{{form.productCodeImage}}" mode="aspectFill" />
+          <view wx:else class="upload-content">
+            <view class="upload-icon"><text class="upload-icon-text">+</text></view>
+            <view class="upload-text">{{form.productType === 'qrCode' ? '二维码' : form.productType === 'posMachine' ? 'TUSN码' : '产品码'}}</view>
+            <view class="upload-text required">*请上传清晰的{{form.productType === 'qrCode' ? '二维码' : form.productType === 'posMachine' ? 'TUSN码' : '产品码'}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <view class="page-spacer"></view>
+  <button class="next-btn" bindtap="goToNext">下一步</button>
+</view>
+
+<view class="region-selector-overlay" wx:if="{{showMerchantTypeSelector}}" bindtap="closeMerchantTypeSelector"></view>
+<view class="region-selector-container" wx:if="{{showMerchantTypeSelector}}">
+  <view class="region-selector-header">
+    <text class="region-selector-title">选择商户类型</text>
+    <text class="region-selector-close" bindtap="closeMerchantTypeSelector">×</text>
+  </view>
+  <view class="merchant-type-search">
+    <input type="text" class="merchant-type-search-input" placeholder="请输入行业名称或MCC码" value="{{merchantTypeSearchValue}}" bindinput="onMerchantTypeSearch" />
+  </view>
+  <view class="merchant-type-content">
+    <view class="merchant-type-left">
+      <view class="merchant-type-header">
+        <view class="merchant-type-column">大类</view>
+      </view>
+      <scroll-view class="merchant-type-list" scroll-y>
+        <view wx:for="{{filteredMerchantTypes}}" wx:key="id" class="merchant-category-item {{selectedCategory.id === item.id ? 'selected' : ''}}" bindtap="selectCategory" data-category="{{item}}">
+          <text>{{item.name}}</text>
+        </view>
+      </scroll-view>
+    </view>
+    <view class="merchant-type-right">
+      <view class="merchant-type-header">
+        <view class="merchant-type-column">小类</view>
+        <view class="merchant-type-column">MCC码</view>
+      </view>
+      <scroll-view class="merchant-type-list" scroll-y>
+        <view wx:for="{{filteredSubCategories}}" wx:key="mcc" class="merchant-subcategory-item {{selectedSubcategory.mcc === item.mcc ? 'selected' : ''}}" bindtap="selectSubcategory" data-subcategory="{{item}}">
+          <text class="merchant-subcategory-name">{{item.name}}</text>
+          <text class="merchant-subcategory-mcc">{{item.mcc}}</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>
+
+

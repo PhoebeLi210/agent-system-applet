@@ -1,0 +1,146 @@
+/* 成功页样式 */
+
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f0f8ff 0%, #e0f2fe 30%, rgba(255, 255, 255, 0) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx;
+}
+
+.success-container {
+  background-color: #fff;
+  border-radius: 24rpx;
+  padding: 80rpx 48rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 600rpx;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  padding: 0;
+  line-height: 1;
+}
+
+.close-btn:active {
+  background-color: #e2e8f0;
+  transform: scale(0.95);
+}
+
+.close-icon {
+  font-size: 32rpx;
+  color: #64748b;
+  font-weight: 300;
+}
+
+.success-icon {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(16, 185, 129, 0.3);
+}
+
+.check-icon {
+  font-size: 64rpx;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.success-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1e293b;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.success-message {
+  font-size: 28rpx;
+  color: #64748b;
+  display: block;
+  margin-bottom: 48rpx;
+  line-height: 1.6;
+}
+
+.action-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #fff;
+  border: none;
+  border-radius: 24rpx;
+  padding: 28rpx 48rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.3);
+}
+
+.action-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 16rpx rgba(59, 130, 246, 0.25);
+}
+
+.close-btn:active {
+  background-color: #1d4ed8;
+  transform: translateY(0);
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .container {
+    max-width: 100%;
+  }
+  
+  .success-card {
+    padding: 48rpx 32rpx;
+  }
+  
+  .success-icon {
+    width: 100rpx;
+    height: 100rpx;
+    font-size: 60rpx;
+    margin-bottom: 24rpx;
+  }
+  
+  .success-title {
+    font-size: 32rpx;
+    margin-bottom: 20rpx;
+  }
+  
+  .success-message {
+    font-size: 24rpx;
+  }
+  
+  .success-tip {
+    font-size: 20rpx;
+    margin-bottom: 40rpx;
+  }
+  
+  .close-btn {
+    height: 80rpx;
+    font-size: 26rpx;
+  }
+}
