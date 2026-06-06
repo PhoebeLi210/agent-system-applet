@@ -33,6 +33,8 @@ jobs:
             # Make sure deploy script is executable
             if [ -f ./deploy.sh ]; then
               chmod +x ./deploy.sh
+              # export APP_DIR so deploy.sh defaults to the current server path
+              export APP_DIR="${SERVER_PATH:-/www/wwwroot/agent.lakala.space}"
               ./deploy.sh
             else
               echo "deploy.sh not found in repo root on server"

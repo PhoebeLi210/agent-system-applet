@@ -5,8 +5,10 @@ set -euo pipefail
 # 用法：在服务器上作为部署脚本运行（确保已配置好 SSH/权限）
 
 # 可通过环境变量覆盖
-APP_DIR=${APP_DIR:-/www/wwwroot/agent-system}
-REPO=${REPO:-https://github.com/<yourname>/<your-repo>.git}
+# 默认使用当前工作目录（通常由 workflow 的 SERVER_PATH 指定），避免仓库与脚本中不同路径导致的问题
+APP_DIR=${APP_DIR:-$(pwd)}
+# 如果没有显式设置 REPO，保留为空（workflow 在首次 clone 时已把代码放到当前目录）
+REPO=${REPO:-}
 BRANCH=${BRANCH:-main}
 PM2_NAME=${PM2_NAME:-agent-system}
 BACKUP_DIR=${BACKUP_DIR:-${APP_DIR}/backups}

@@ -408,10 +408,39 @@
                             data.data.forEach(merchant => {
                                 const tr = document.createElement('tr');
                                 
+                                // 处理照片显示
+                                let photosHtml = '';
+                                const photoFields = [
+                                    { field: 'licensePhoto', label: '营业执照' },
+                                    { field: 'idCardFrontPhoto', label: '身份证正面' },
+                                    { field: 'idCardBackPhoto', label: '身份证反面' },
+                                    { field: 'shopFrontPhoto', label: '门头照' },
+                                    { field: 'shopInteriorPhoto', label: '商铺内照' },
+                                    { field: 'cashierPhoto', label: '收银台照' },
+                                    { field: 'productCodePhoto', label: '二维码/TUSN码' },
+                                    { field: 'bankCardPhoto', label: '银行卡' },
+                                    { field: 'accountMaterialPhoto', label: '账户材料' }
+                                ];
+                                
+                                const photoCount = photoFields.filter(pf => merchant[pf.field]).length;
+                                
+                                if (photoCount > 0) {
+                                    photosHtml = `<div style="display: flex; gap: 5px; flex-wrap: wrap; align-items: center;">`;
+                                    photosHtml += `<span style="font-size: 12px; color: #1890ff; margin-right: 5px;">${photoCount}张</span>`;
+                                    photoFields.forEach(pf => {
+                                        if (merchant[pf.field]) {
+                                            photosHtml += `<img src="${merchant[pf.field]}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 1px solid #d9d9d9;" onclick="viewImage('${merchant[pf.field]}')" title="${pf.label}">`;
+                                        }
+                                    });
+                                    photosHtml += '</div>';
+                                } else {
+                                    photosHtml = '-';
+                                }
+                                
                                 tr.innerHTML = `
                                     <td><input type="checkbox" class="merchant-checkbox" data-id="${merchant.id}" onclick="updateSelectedMerchantCount()" style="width: 16px; height: 16px; cursor: pointer;"></td>
                                     <td>${merchant.merchantName || '-'}</td>
-                                    <td>${merchant.created_at ? merchant.created_at.replace('T', ' ').substring(0, 19) : '-'}</td>
+                                    <td>${new Date(merchant.createdAt).toLocaleString()}</td>
                                     <td>
                                         <button onclick="viewMerchant('${merchant.id}')" style="padding: 5px 10px; border: none; border-radius: 4px; background: #1890ff; color: white; cursor: pointer; font-size: 12px; margin-right: 5px;">详情</button>
                                         <button onclick="deleteMerchant('${merchant.id}')" style="padding: 5px 10px; border: none; border-radius: 4px; background: #ff4d4f; color: white; cursor: pointer; font-size: 12px;">删除</button>
@@ -563,46 +592,32 @@
                         
                         let content = '<h3 style="margin-bottom: 20px; color: #1890ff;">商户详细信息</h3>';
                         
-                        // 生成7位随机商户ID
-                        const merchantId = String(Math.floor(1000000 + Math.random() * 9000000));
-                        
                         // 基本信息
                         const infoFields = [
-                            { label: '商户ID', value: merchantId },
+                            { label: '商户ID', key: 'id' },
                             { label: '商户名称', key: 'merchantName' },
-                            { label: '商户类型', key: 'merchantTypeText' },
-                            { label: '营业执照编号', key: 'businessLicenseNumber' },
-                            { label: '营业执照名称', key: 'businessLicenseName' },
-                            { label: '营业执照有效期', key: 'licenseValidity' },
-                            { label: '法人姓名', key: 'legalPersonName' },
-                            { label: '身份证号', key: 'legalPersonIdNumber' },
-                            { label: '身份证有效期起', key: 'legalPersonIdStartDate' },
-                            { label: '身份证有效期至', key: 'legalPersonIdValidity' },
-                            { label: '手机号', key: 'contactPhone' },
-                            { label: '电子邮箱', key: 'contactEmail' },
-                            { label: '联系地址', key: 'address' },
+                            { label: '法人姓名', key: 'idCardName' },
+                            { label: '身份证号', key: 'idCardNumber' },
+                            { label: '身份证有效期', key: 'idCardValidity' },
+                            { label: '手机号', key: 'phoneNumber' },
+                            { label: '邮箱', key: 'email' },
+                            { label: '联系地址', key: 'regionText' },
                             { label: '详细地址', key: 'detailAddress' },
-                            { label: '开户城市', combine: ['province', 'city', 'district'] },
-                            { label: '开户支行', key: 'bankBranch' },
-                            { label: '结算周期', key: 'rate' },
+                            { label: '商户类型', key: 'merchantTypeText' },
+                            { label: '结算周期', key: 'settlementType' },
+                            { label: '开户城市', key: 'bankCity' },
                             { label: '开户银行', key: 'bankName' },
-                            { label: '银行卡号', key: 'bankAccountNumber' },
-                            { label: '提交时间', key: 'created_at', isDate: true }
+                            { label: '开户名', key: 'accountName' },
+                            { label: '银行卡号', key: 'bankCardNumber' },
+                            { label: '提交时间', key: 'createdAt' }
                         ];
                         
                         content += '<div style="margin-bottom: 20px;">';
                         infoFields.forEach(field => {
-                            let value = field.value;
-                            if (field.key) {
-                                value = merchant[field.key];
-                            } else if (field.combine) {
-                                const parts = field.combine.map(k => merchant[k]).filter(v => v);
-                                value = parts.join(' ');
-                            }
+                            const value = merchant[field.key];
                             if (value) {
-                                if (field.isDate) {
-                                    const dateStr = typeof value === 'string' && value.includes('-') ? value.replace('T', ' ').substring(0, 19) : '-';
-                                    content += `<div style="margin-bottom: 8px;"><strong>${field.label}:</strong> ${dateStr}</div>`;
+                                if (field.key === 'createdAt') {
+                                    content += `<div style="margin-bottom: 8px;"><strong>${field.label}:</strong> ${new Date(value).toLocaleString()}</div>`;
                                 } else {
                                     content += `<div style="margin-bottom: 8px;"><strong>${field.label}:</strong> ${value}</div>`;
                                 }
@@ -615,12 +630,12 @@
                             { field: 'licensePhoto', label: '营业执照' },
                             { field: 'idCardFrontPhoto', label: '身份证正面' },
                             { field: 'idCardBackPhoto', label: '身份证反面' },
-                            { field: 'bankCardPhoto', label: '银行卡' },
-                            { field: 'accountMaterialPhoto', label: '开户资料' },
                             { field: 'shopFrontPhoto', label: '门头照' },
                             { field: 'shopInteriorPhoto', label: '商铺内照' },
                             { field: 'cashierPhoto', label: '收银台照' },
-                            { field: 'productCodePhoto', label: '二维码或TUSN码照片' }
+                            { field: 'productCodePhoto', label: '二维码/TUSN码' },
+                            { field: 'bankCardPhoto', label: '银行卡' },
+                            { field: 'accountMaterialPhoto', label: '账户材料' }
                         ];
                         
                         const hasPhotos = photoFields.some(pf => merchant[pf.field]);
@@ -884,64 +899,42 @@
                     html += `<div style="font-size: 32px; font-weight: bold; color: #52c41a;">${totalPhotos}</div>`;
                     html += `<div style="font-size: 14px; color: #666; margin-top: 5px;">照片总数</div>`;
                     html += `</div>`;
-                    html += '</div>';
-                    
-                    // 商户类型分布
-                    html += '<h4 style="margin-bottom: 15px; color: #333;">商户类型分布</h4>';
-                    html += '<div style="background: #fafafa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">';
+                    html += `</div>`;
                     
                     if (Object.keys(merchantTypes).length > 0) {
+                        html += '<h4 style="margin-bottom: 15px; color: #333;">商户类型分布</h4>';
+                        html += '<div style="background: #fafafa; padding: 15px; border-radius: 8px;">';
                         Object.entries(merchantTypes).forEach(([type, count]) => {
-                            html += `<div style="display: flex; justify-content: space-between; margin-bottom: 10px;">`;
+                            const percentage = ((count / totalMerchants) * 100).toFixed(1);
+                            html += `<div style="margin-bottom: 10px;">`;
+                            html += `<div style="display: flex; justify-content: space-between; margin-bottom: 5px;">`;
                             html += `<span>${type}</span>`;
-                            html += `<span style="font-weight: 600;">${count} 个</span>`;
+                            html += `<span>${count} (${percentage}%)</span>`;
+                            html += `</div>`;
+                            html += `<div style="background: #e8e8e8; height: 8px; border-radius: 4px; overflow: hidden;">`;
+                            html += `<div style="background: #1890ff; height: 100%; width: ${percentage}%;"></div>`;
+                            html += `</div>`;
                             html += `</div>`;
                         });
-                    } else {
-                        html += '<div style="text-align: center; color: #999;">暂无数据</div>';
+                        html += '</div>';
                     }
                     
                     html += '</div>';
-                    
-                    // 最近注册的商户
-                    html += '<h4 style="margin-bottom: 15px; color: #333;">最近注册的商户</h4>';
-                    html += '<div style="background: #fafafa; padding: 20px; border-radius: 8px;">';
-                    
-                    if (merchants.length > 0) {
-                        const recentMerchants = merchants.slice(0, 5);
-                        recentMerchants.forEach(merchant => {
-                            html += `<div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e8e8e8;">`;
-                            html += `<div style="font-weight: 600; margin-bottom: 5px;">${merchant.merchantName || '未命名'}</div>`;
-                            html += `<div style="font-size: 12px; color: #666;">注册时间: ${merchant.created_at ? merchant.created_at.replace('T', ' ').substring(0, 19) : '-'}</div>`;
-                            html += `</div>`;
-                        });
-                    } else {
-                        html += '<div style="text-align: center; color: #999;">暂无数据</div>';
-                    }
-                    
-                    html += '</div>';
-                    html += '</div>';
-                    
                     dataContainer.innerHTML = html;
                 } else {
                     dataContainer.innerHTML = '<div class="empty">加载失败</div>';
                 }
             })
             .catch(error => {
-                console.error('Error loading data:', error);
+                console.error('加载数据失败:', error);
                 dataContainer.innerHTML = '<div class="empty">加载失败</div>';
             });
         }
         
-        function logout() {
-            removeToken();
-            window.location.href = '/login';
-        }
-        
         // 全选商户
         function selectAllMerchants() {
-            const checkboxes = document.querySelectorAll('.merchant-checkbox');
             const selectAllCheckbox = document.getElementById('selectAllMerchants');
+            const checkboxes = document.querySelectorAll('.merchant-checkbox');
             checkboxes.forEach(cb => cb.checked = selectAllCheckbox.checked);
             updateSelectedMerchantCount();
         }
@@ -963,7 +956,7 @@
                 return;
             }
             
-            if (!confirm(`确定要删除选中的 ${checkboxes.length} 个商户吗？此操作不可恢复！`)) {
+            if (!confirm(`确定要删除选中的 ${checkboxes.length} 个商户信息吗？`)) {
                 return;
             }
             
@@ -992,17 +985,29 @@
             });
             
             Promise.all(deletePromises).then(() => {
-                alert(`删除完成！成功: ${successCount} 个，失败: ${failCount} 个`);
-                loadMerchants();
+                // 使用confirm只会显示确定和取消，不会显示关闭网页
+                confirm(`删除完成！成功: ${successCount} 个，失败: ${failCount} 个`);
+                // 延迟重新加载，确保服务器端已处理完成
+                setTimeout(loadMerchants, 1000);
             });
         }
         
-        // 页面加载时检查登录状态并加载商户信息
+        // 页面加载时默认显示商户管理
         window.onload = function() {
-            if (checkLogin()) {
-                loadMerchants();
+            // 检查登录状态
+            if (!checkLogin()) {
+                return;
             }
+            loadMerchants();
         };
+        
+        // 退出登录
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                removeToken();
+                window.location.href = '/login';
+            }
+        }
     </script>
 </body>
 </html>
