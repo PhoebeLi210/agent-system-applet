@@ -41,6 +41,15 @@ Page({
     this.loadFromStorage();
     this.loadRegionData();
     this.loadBankData();
+    // 客户端预取：已选城市则提前拉支行，打开弹窗零等待
+    this._branchCache = {};
+    this.prefetchBranches();
+  },
+
+  prefetchBranches() {
+    const city = this.data.selectedCity;
+    if (!city) return;
+    this.fetchBranches(city, '', true);
   },
 
   loadFromStorage() {
@@ -356,6 +365,9 @@ Page({
     wx.setStorageSync('bankProvince', this.data.bankProvince);
     wx.setStorageSync('bankCity', city);
     wx.setStorageSync('bankCityText', cityText);
+    // 选完城市立即静默预取支行，减少后续打开弹窗的等待
+    if (!this._branchCache) this._branchCache = {};
+    this.fetchBranches(city, '', true);
   },
 
   openBankPicker() {
@@ -371,23 +383,32 @@ Page({
     }
   },
 
-  fetchBranches(city, keyword) {
-    this.setData({ showBankPicker: true, bankLoading: true, bankSearch: keyword });
+  fetchBranches(city, keyword, silent) {
+    silent = silent === true;
+    const cacheKey = city + '|' + (keyword || '');
+    if (this._branchCache && this._branchCache[cacheKey]) {
+      this.setData({ filteredBanks: this._branchCache[cacheKey], showBankPicker: !silent, bankLoading: false });
+      return;
+    }
+    if (!silent) this.setData({ showBankPicker: true, bankLoading: true });
+    this.setData({ bankSearch: keyword });
     const cityText = city.replace(/市|省|自治区|壮族|回族|维吾尔|特别行政区/g, '');
     let url = this.data.apiBaseUrl + '/api/bank-branches?city=' + encodeURIComponent(cityText);
     if (keyword) url += '&keyword=' + encodeURIComponent(keyword);
+    const self = this;
     wx.request({
       url: url,
       method: 'GET',
       success: (res) => {
         if (res.data && res.data.success && Array.isArray(res.data.data)) {
-          this.setData({ filteredBanks: res.data.data, bankLoading: false });
+          if (self._branchCache) self._branchCache[cacheKey] = res.data.data;
+          self.setData({ filteredBanks: res.data.data, bankLoading: false, showBankPicker: !silent });
         } else {
-          this.fallbackFilter(cityText, keyword);
+          if (!silent) self.fallbackFilter(cityText, keyword);
         }
       },
       fail: () => {
-        this.fallbackFilter(cityText, keyword);
+        if (!silent) self.fallbackFilter(cityText, keyword);
       }
     });
   },
