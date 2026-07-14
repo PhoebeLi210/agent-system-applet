@@ -351,6 +351,17 @@
             };
         }
         
+        // 格式化时间，兼容不同字段名并避免 Invalid Date
+        function formatDate(value) {
+            try {
+                const d = new Date(value);
+                if (!value || isNaN(d.getTime())) return '-';
+                return d.toLocaleString();
+            } catch (e) {
+                return '-';
+            }
+        }
+        
         function showTab(tabId) {
             // 隐藏所有标签内容
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -440,7 +451,7 @@
                                 tr.innerHTML = `
                                     <td><input type="checkbox" class="merchant-checkbox" data-id="${merchant.id}" onclick="updateSelectedMerchantCount()" style="width: 16px; height: 16px; cursor: pointer;"></td>
                                     <td>${merchant.merchantName || '-'}</td>
-                                    <td>${new Date(merchant.createdAt).toLocaleString()}</td>
+                                    <td>${formatDate(merchant.created_at || merchant.createdAt)}</td>
                                     <td>
                                         <button onclick="viewMerchant('${merchant.id}')" style="padding: 5px 10px; border: none; border-radius: 4px; background: #1890ff; color: white; cursor: pointer; font-size: 12px; margin-right: 5px;">详情</button>
                                         <button onclick="deleteMerchant('${merchant.id}')" style="padding: 5px 10px; border: none; border-radius: 4px; background: #ff4d4f; color: white; cursor: pointer; font-size: 12px;">删除</button>
@@ -617,7 +628,7 @@
                             const value = merchant[field.key];
                             if (value) {
                                 if (field.key === 'createdAt') {
-                                    content += `<div style="margin-bottom: 8px;"><strong>${field.label}:</strong> ${new Date(value).toLocaleString()}</div>`;
+                                    content += `<div style="margin-bottom: 8px;"><strong>${field.label}:</strong> ${formatDate(value || merchant.created_at || merchant.createdAt)}</div>`;
                                 } else {
                                     content += `<div style="margin-bottom: 8px;"><strong>${field.label}:</strong> ${value}</div>`;
                                 }
@@ -741,7 +752,7 @@
                                 html += `<div style="margin-top: 8px; font-size: 12px; color: #666;">`;
                                 html += `<div style="margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${photo.filename}">${photo.filename}</div>`;
                                 html += `<div style="margin-bottom: 3px;">大小: ${(photo.size / 1024).toFixed(2)} KB</div>`;
-                                html += `<div>${new Date(photo.modified).toLocaleString()}</div>`;
+                                html += `<div>${formatDate(photo.modified)}</div>`;
                                 html += `</div>`;
                                 html += `<button onclick="deleteSinglePhoto('${photo.filename}')" style="width: 100%; margin-top: 8px; padding: 6px 12px; border: none; border-radius: 4px; background: #ff4d4f; color: white; cursor: pointer; font-size: 12px;">删除</button>`;
                                 html += `</div>`;

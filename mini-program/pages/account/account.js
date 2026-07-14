@@ -28,7 +28,8 @@ Page({
     bankSearch: '',
     customBankName: '',
     banks: [],
-    filteredBanks: []
+    filteredBanks: [],
+    bankLoading: false
   },
 
   onLoad(options) {
@@ -358,19 +359,44 @@ Page({
   },
 
   openBankPicker() {
-    let filteredBanks = this.data.banks;
-    
     if (this.data.selectedCity) {
-      const cityName = this.data.selectedCity.replace(/市|省|自治区|壮族|回族|维吾尔|特别行政区/g, '');
-      filteredBanks = this.data.banks.filter(bank => 
-        bank.name.includes(cityName)
-      );
+      this.fetchBranches(this.data.selectedCity, '');
+    } else {
+      this.setData({
+        showBankPicker: true,
+        filteredBanks: this.data.banks,
+        bankSearch: ''
+      });
+      wx.showToast({ title: '建议先选择开户城市', icon: 'none' });
     }
-    
-    this.setData({
-      showBankPicker: true,
-      filteredBanks: filteredBanks
+  },
+
+  fetchBranches(city, keyword) {
+    this.setData({ showBankPicker: true, bankLoading: true, bankSearch: keyword });
+    const cityText = city.replace(/市|省|自治区|壮族|回族|维吾尔|特别行政区/g, '');
+    let url = this.data.apiBaseUrl + '/api/bank-branches?city=' + encodeURIComponent(cityText);
+    if (keyword) url += '&keyword=' + encodeURIComponent(keyword);
+    wx.request({
+      url: url,
+      method: 'GET',
+      success: (res) => {
+        if (res.data && res.data.success && Array.isArray(res.data.data)) {
+          this.setData({ filteredBanks: res.data.data, bankLoading: false });
+        } else {
+          this.fallbackFilter(cityText, keyword);
+        }
+      },
+      fail: () => {
+        this.fallbackFilter(cityText, keyword);
+      }
     });
+  },
+
+  fallbackFilter(cityText, keyword) {
+    let list = this.data.banks;
+    if (cityText) list = list.filter(b => b.name.indexOf(cityText) !== -1);
+    if (keyword) list = list.filter(b => b.name.indexOf(keyword) !== -1);
+    this.setData({ filteredBanks: list, bankLoading: false });
   },
 
   closeBankPicker() {
@@ -382,26 +408,35 @@ Page({
 
   onBankSearchChange(e) {
     const search = e.detail.value;
-    const filteredBanks = this.data.banks.filter(bank => 
-      bank.name.includes(search)
-    );
-    
-    this.setData({
-      bankSearch: search,
-      filteredBanks: filteredBanks
-    });
+    this.setData({ bankSearch: search });
+    if (this.data.selectedCity) {
+      if (this._searchTimer) clearTimeout(this._searchTimer);
+      const self = this;
+      this._searchTimer = setTimeout(() => {
+        self.fetchBranches(self.data.selectedCity, search);
+      }, 300);
+    } else {
+      const filteredBanks = this.data.banks.filter(bank =>
+        bank.name.includes(search)
+      );
+      this.setData({ filteredBanks: filteredBanks });
+    }
   },
 
   selectBank(e) {
-    const bank = e.currentTarget.dataset.bank;
-    
+    const item = e.currentTarget.dataset.bank;
+    const bankName = item.name || '';
+    const bankBranch = item.code || '';
+
     this.setData({
-      bankName: bank,
+      bankName: bankName,
+      bankBranch: bankBranch,
       showBankPicker: false,
       bankSearch: ''
     });
-    
-    wx.setStorageSync('bankName', bank);
+
+    wx.setStorageSync('bankName', bankName);
+    wx.setStorageSync('bankBranch', bankBranch);
   },
 
   clearBankName() {
